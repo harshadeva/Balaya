@@ -1,0 +1,37 @@
+{
+
+  "Login_title":"ඇතුලු වන්න",
+  "Login_text":"පද්ධතිය වෙත ඇතුලු වන්න.",
+
+
+  "Dashboard":"පුවරුව",
+  "Add Users":"එකතු කරන්න",
+  "View Users":"බලන්න",
+  "ADMINISTRATION":"පරිපාලනය",
+  "Users":"පරිශීලකයින්",
+
+
+  "add_user_page_title":"නව පරිශීලකයින් එකතු කරන්න",
+  "add_user_registration":"ලියාපදිංචි කිරීම",
+  "add_user_fname":"මුල් නම",
+  "add_user_lname":"අවසන් නම",
+  "Email":"විද්යුත් තැපෑල",
+  "Password":"මුරපදය",
+  "password_confirmation":"මුරපදය තහවුරු කිරීම",
+  "Phone":"දුරකතන අංකය",
+  "User Role":"පරිශීලක භූමිකාව",
+  "Date of Birth":"උපන්දිනය",
+  "Gender":"ස්ත්‍රී පුරුෂ භාවය",
+  "Male":"පිරිමි",
+  "Female":"ගැහැණු",
+  "cancel":"අවලංගු කරන්න",
+  "Cancel":"අවලංගු කරන්න",
+  "add_user_cancel_btn":"අවලංගු කරන්න",
+  "add_user_registration_btn":"ලියාපදිංචි කරන්න",
+  "add_user_title":"ශීර්ෂය",
+
+  "election_division_name":"ඡන්ද කොට්ඨාශය"
+
+
+
+}

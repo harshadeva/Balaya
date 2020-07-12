@@ -1,0 +1,18 @@
+{
+  "Login_title":"Welcome!",
+  "Login_text":" ",
+
+
+  "add_user_registration":"Registration",
+  "add_user_page_title":"Add User",
+  "add_user_title":"Title",
+  "add_user_fname":"First Name",
+  "add_user_lname":"Last Name",
+  "password_confirmation":"Confirm Password",
+  "add_user_registration_btn":"Register",
+  "add_user_cancel_btn":"Cancel",
+
+
+  "election_division_name":"Election Division Name"
+
+}

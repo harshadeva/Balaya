@@ -1,0 +1,4 @@
+composer update
+php artisan storage:link
+php artisan passport:install
+php artisan config:cache
