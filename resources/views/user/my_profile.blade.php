@@ -370,22 +370,5 @@
             }
         });
 
-        function userRoleChanged(id) {
-
-            if(id == 4){
-
-                $('#nic').attr('required',false);
-                $('#dob').attr('required',false);
-                $('.viewToggle').hide();
-            }
-            else{
-                $('.viewToggle').show();
-                $('#nic').attr('required',true);
-                $('#dob').attr('required',true);
-
-
-            }
-
-        }
     </script>
 @endsection
