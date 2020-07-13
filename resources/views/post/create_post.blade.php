@@ -371,16 +371,16 @@
                                 <div class="form-group col-md-6">
                                     <label style="margin-left: 5px;" class="control-label">{{ __('Gender') }}</label>
                                     <div class="row">
-                                        <label style="margin-left: 10px;" class="radio-inline"><input
+                                        <label style="margin-left: 10px;" class="radio-inline noClear"><input
                                                     style="margin-left: 10px;" type="radio" value="" name="gender"
                                                     checked>&nbsp;{{ __('All') }}
                                         </label>
-                                        <label style="margin-left: 5px;" class="radio-inline"><input
+                                        <label style="margin-left: 5px;" class="radio-inline noClear"><input
                                                     style="margin-left: 5px;" type="radio" value="0"
                                                     name="gender">&nbsp;{{ __('Male') }}
                                         </label> &nbsp;
                                         &nbsp;
-                                        <label style="margin-left: 5px;" class="radio-inline"><input
+                                        <label style="margin-left: 5px;" class="radio-inline noClear"><input
                                                     style="margin-left: 5px;" type="radio" value="1"
                                                     name="gender">&nbsp;{{ __('Female') }}</label>
                                         <label style="margin-left: 5px;" class="radio-inline"><input
@@ -590,7 +590,7 @@
         });
 
         function clearAll() {
-            $('input').not('noClear').not('#age').not('#minAge').not('#maxAge').not(':checkbox').val('');
+            $('input').not('.noClear').not('#age').not('#minAge').not('#maxAge').not(':checkbox').not(':radio').val('');
             $('textarea').val('');
             $(":checkbox").attr('checked', false).trigger('change');
             $(":radio").attr('checked', false).trigger('change');

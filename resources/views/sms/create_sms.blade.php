@@ -466,6 +466,8 @@
                 type: 'POST',
                 data: $('#form1').serialize(),
                 success: function (data) {
+                    console.log(data);
+
                     if (data.errors != null) {
                         $('#errorAlert').show();
                         $.each(data.errors, function (key, value) {
