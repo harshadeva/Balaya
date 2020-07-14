@@ -85,7 +85,7 @@
                                                                         <div class="dropdown-menu"
                                                                              aria-labelledby="dropdownMenuButton">
                                                                             <a href="#"
-                                                                               onclick="assignedDivision({{$council->idcouncil}})"
+                                                                               onclick="assignedDivisions({{$council->idcouncil}})"
                                                                                class="dropdown-item">Assign New
                                                                             </a>
                                                                             <a href="#"
@@ -282,7 +282,6 @@
                     if (data.success != null) {
 
                         let divisions = data.success;
-                        console.log(divisions);
                         $('#viewTBody').html('');
                         $.each(divisions, function (key, value) {
                             $('#viewTBody').append('' +
@@ -298,7 +297,7 @@
             });
         }
 
-        function assignedDivision(id) {
+        function assignedDivisions(id) {
             $('#councilId').val(id);
             $('.alert').hide();
             $('.alert').html("");
@@ -332,7 +331,6 @@
                     if (data.success != null) {
 
                         let divisions = data.success;
-                        console.log(divisions);
                         $('#assignTBody').html('');
                         if (divisions.length > 0) {
                             $.each(divisions, function (key, value) {
@@ -388,84 +386,79 @@
         });
 
         $("#searchE").keyup(function () {
-            if ($(this).find("td").eq(0).text().search(new RegExp(filter0, "i")) < 0) {
-                $(this).addClass('electionFilter');
+            let search = this.value;
+            if(search) {
+                $("#assignTBody tr").each(function () {
+                    if ($(this).find("td").eq(0).text().search(new RegExp(search, "i")) < 0) {
+                        $(this).addClass('electionFilter');
 
-            } else {
-                $(this).removeClass('electionFilter');
+                    } else {
+                        $(this).removeClass('electionFilter');
 
+                    }
+                });
             }
+            else{
+                $("#assignTBody tr").each(function () {
+                    $(this).removeClass('electionFilter');
+                });
+            }
+            filter();
         });
 
         $("#searchP").keyup(function () {
-            if ($(this).find("td").eq(0).text().search(new RegExp(filter0, "i")) < 0) {
-                $(this).addClass('pollingFilter');
+            let search = this.value;
+            if(search) {
+                $("#assignTBody tr").each(function () {
+                    if ($(this).find("td").eq(1).text().search(new RegExp(search, "i")) < 0) {
+                        $(this).addClass('pollingFilter');
 
-            } else {
-                $(this).removeClass('pollingFilter');
+                    } else {
+                        $(this).removeClass('pollingFilter');
 
+                    }
+                });
             }
+            else{
+                    $("#assignTBody tr").each(function () {
+                        $(this).removeClass('pollingFilter');
+                    });
+                }
+            filter();
         });
 
         $("#searchG").keyup(function () {
-            if ($(this).find("td").eq(0).text().search(new RegExp(filter0, "i")) < 0) {
-                $(this).addClass('gramasewaFilter');
+            let search = this.value;
+            if(search) {
+                $("#assignTBody tr").each(function () {
+                if ($(this).find("td").eq(2).text().search(new RegExp(search, "i")) < 0) {
+                    $(this).addClass('gramasewaFilter');
 
-            } else {
-                $(this).removeClass('gramasewaFilter');
-
-            }
-        });
-        
-       function () {
-           
-       } filter(){
-            
-        }
-
-        
-        $(".filters").keyup(function () {
-
-            $("#assignTBody tr").each(function () {
-                var filter0 = $('#searchE').val();
-                // If the list item does not contain the text phrase fade it out
-                if ($(this).find("td").eq(0).text().search(new RegExp(filter0, "i")) < 0) {
-                    $(this).fadeOut();
-
-                    // Show the list item if the phrase matches and increase the count by 1
                 } else {
-                    // Retrieve the input field text and reset the count to zero
-                    var filter = $('#searchP').val();
+                    $(this).removeClass('gramasewaFilter');
 
-                    // Loop through the comment list
-                    $("#assignTBody tr").each(function () {
-
-                        // If the list item does not contain the text phrase fade it out
-                        if ($(this).find("td").eq(1).text().search(new RegExp(filter, "i")) < 0) {
-                            $(this).fadeOut();
-
-                            // Show the list item if the phrase matches and increase the count by 1
-                        } else {
-                            // Retrieve the input field text and reset the count to zero
-                            var filter3 = $('#searchG').val();
-
-                            // Loop through the comment list
-                            $("#assignTBody tr").each(function () {
-
-                                // If the list item does not contain the text phrase fade it out
-                                if ($(this).find("td").eq(2).text().search(new RegExp(filter3, "i")) < 0) {
-                                    $(this).fadeOut();
-
-                                    // Show the list item if the phrase matches and increase the count by 1
-                                } else {
-                                    $(this).show();
-                                }
-                            });
-                        }
-                    });
                 }
             });
+            }
+            else{
+                $("#assignTBody tr").each(function () {
+                    $(this).removeClass('gramasewaFilter');
+                });
+            }
+            filter();
         });
+        
+       function filter() {
+
+           $("#assignTBody tr").each(function () {
+               if($(this).hasClass('electionFilter') || $(this).hasClass('pollingFilter') || $(this).hasClass('gramasewaFilter')){
+                   $(this).fadeOut();
+               }
+               else{
+                   $(this).show();
+               }
+           });
+       }
 
         function assignDivision() {
             let id = $('#councilId').val();

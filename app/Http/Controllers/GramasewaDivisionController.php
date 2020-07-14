@@ -204,7 +204,7 @@ class GramasewaDivisionController extends Controller
         return response()->json(['success' => 'Gramasewa Division updated']);
     }
 
-    public function confirm(Request $request){
+    public function confirm(){
         $gramasewaDivisions = GramasewaDivision::where('idUser',Auth::user()->idUser)->where('status',2)->get();
         $gramasewaDivisions->each(function ($item,$key){
             $item->status = 1;
@@ -238,7 +238,7 @@ class GramasewaDivisionController extends Controller
         return response()->json(['success' => GramasewaDivision::with(['pollingBooth','pollingBooth.electionDivision'])->where('iddivisional_secretariat',$secretariat)->where('status',1)->get()]);
     }
 
-    public function getUnAssigned(Request $request){
+    public function getUnAssigned(){
         return response()->json(['success' => GramasewaDivision::with(['pollingBooth','pollingBooth.electionDivision'])->where('iddivisional_secretariat',null)->where('iddistrict',Auth::user()->office->iddistrict)->where('status',1)->get()]);
     }
 
@@ -247,7 +247,7 @@ class GramasewaDivisionController extends Controller
         return response()->json(['success' => GramasewaDivision::with(['pollingBooth','pollingBooth.electionDivision'])->where('idcouncil',$council)->where('status',1)->get()]);
     }
 
-    public function getUnCouncilled(Request $request){
+    public function getUnCouncilled(){
         return response()->json(['success' => GramasewaDivision::with(['pollingBooth','pollingBooth.electionDivision'])->where('idcouncil',null)->where('status',1)->get()]);
     }
 
