@@ -3,6 +3,11 @@
     <!--Morris Chart CSS -->
     <link rel="stylesheet" href="{{ URL::asset('assets/plugins/morris/morris.css')}}">
 
+    <style>
+        .morris-default-style{
+            z-index: 0;
+        }
+    </style>
 
 @endsection
 @section('psContent')
@@ -356,7 +361,7 @@
     <!--Morris Chart-->
     <script src="{{ URL::asset('assets/plugins/morris/morris.min.js')}}"></script>
     <script src="{{ URL::asset('assets/plugins/raphael/raphael-min.js')}}"></script>
-    <script src="{{ URL::asset('assets/pages/dashborad.js')}}"></script>
+{{--    <script src="{{ URL::asset('assets/pages/dashborad.js')}}"></script>--}}
 
     <script>
         $(document).ready(function () {
@@ -461,7 +466,6 @@
 
 
                     });
-                    console.log(categoriesChart);
 
                     new Morris.Donut({
                         // ID of the element in which to draw the chart.

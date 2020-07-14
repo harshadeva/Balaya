@@ -40,11 +40,11 @@
                                         <img src="{{ URL::asset('assets/images/users/avatar-1.jpg')}}" alt="user" class="rounded-circle">
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
-                                        <a class="dropdown-item" href="#"><em class="mdi mdi-account"></em>&nbsp;{{ucfirst(\Illuminate\Support\Facades\Auth::user()->fName)}}</a>
-                                        <a class="dropdown-item" href="#"><em class="mdi mdi-account-star-variant"></em> {{ucfirst(strtolower(\Illuminate\Support\Facades\Auth::user()->userRole->role))}}</a>
-                                        <a class="dropdown-item" href="#"><em class="mdi mdi-bank"></em> {{ucfirst(\Illuminate\Support\Facades\Auth::user()->office->office_name)}}</a>
+                                        <a style="cursor: default" class="dropdown-item" href="#"><em class="mdi mdi-account"></em>&nbsp;{{ucfirst(\Illuminate\Support\Facades\Auth::user()->fName)}}</a>
+                                        <a style="cursor: default" class="dropdown-item" href="#"><em class="mdi mdi-account-star-variant"></em> {{ucfirst(strtolower(\Illuminate\Support\Facades\Auth::user()->userRole->role))}}</a>
+                                        <a style="cursor: default" class="dropdown-item" href="#"><em class="mdi mdi-bank"></em> {{ucfirst(\Illuminate\Support\Facades\Auth::user()->office->office_name)}}</a>
                                         <a class="dropdown-item" href="#" onclick="$('#goToMyProfileForm').submit();"><em class="mdi mdi-account-circle"></em> My Profile</a>
-                                        <button class="dropdown-item" onclick="$('#logout-form').submit();"><i class="dripicons-exit text-muted"></i> Logout</button>
+                                        <button style="cursor: pointer" class="dropdown-item" onclick="$('#logout-form').submit();"><i class="dripicons-exit text-muted"></i> Logout</button>
                                     </div>
                                 </li>
                             </ul>

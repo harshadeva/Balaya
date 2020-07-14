@@ -14,6 +14,7 @@
 //Route::get('/linkstorage', function () {
 //    Artisan::call('storage:link')
 //});
+
 Route::get('test_sms123', function (){
     $client = new \GuzzleHttp\Client();
     $res = $client->get("https://smsserver.textorigins.com/Send_sms?src=CYCLOMAX236&email=cwimagefactory@gmail.com&pwd=cwimagefactory&msg=testSms-Harsha&dst=0717275539");
@@ -28,7 +29,7 @@ Route::get('/signin', function () {
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('privacy', function (){
-    return view('profile.privacy');
+    return view('privacy.privacy');
 })->name('privacy');
 
 

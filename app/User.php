@@ -173,4 +173,8 @@ class User extends Authenticatable
     public function mapLocations(){
         return $this->hasMany(AgentMapLocation::class,'idUser');
     }
+
+    public function loginAlert(){
+       return  $this->login_alert != null ? $this->login_alert : 0;
+    }
 }
