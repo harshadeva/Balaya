@@ -120,9 +120,6 @@ class SmsController extends Controller
 
     public function getFilteredUsers(Request $request)
     {
-        $user = Auth::user()->idUser;
-        $office = Auth::user()->idoffice;
-
         $gramasewaArray = [];
         $pollingArray = [];
         $electionArray = [];

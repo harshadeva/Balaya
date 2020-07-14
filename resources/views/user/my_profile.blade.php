@@ -13,11 +13,12 @@
 
         <div class="container-fluid">
 
+            <form class="form-horizontal" id="form1" role="form">
 
-            <div class="card">
-                <div class="card-body">
-                    {{--<h5 class="card-title">{{ __('add_user_registration') }}</h5>--}}
-                    <form class="form-horizontal" id="form1" role="form">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ __('Profile Details') }}</h5>
+                        <hr/>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="alert alert-danger alert-dismissible " id="errorAlert" style="display:none">
@@ -33,9 +34,11 @@
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-account-circle"></em></span>
+                                            <span class="input-group-text"><em
+                                                        class="mdi mdi-account-circle"></em></span>
                                         </div>
-                                        <input readonly type="text" class="form-control"  value="{{$user->userRole->role}}"
+                                        <input readonly type="text" class="form-control"
+                                               value="{{$user->userRole->role}}"
                                                placeholder="" name="displayUserRole" id="displayUserRole">
                                     </div>
                                 </div>
@@ -145,7 +148,8 @@
                                             <span class="input-group-text"><em
                                                         class="mdi mdi-book-open"></em></span>
                                         </div>
-                                        <input autocomplete="on" type="text" class="form-control"  value="{{$user->address}}"
+                                        <input autocomplete="on" type="text" class="form-control"
+                                               value="{{$user->address}}"
                                                placeholder="" name="address" id="address">
                                     </div>
                                 </div>
@@ -259,6 +263,44 @@
                                 </div>
                             </div>
                         </div>
+
+                    </div><!-- /card body -->
+                </div><!-- /card -->
+                <br/>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5 class="card-title">{{ __('Setting') }}</h5>
+                                <hr/>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>{{ __('SMS Alert on Login') }}</h6>
+                                @if(\Illuminate\Support\Facades\Auth::user()->login_alert == 1 )
+
+                                    <input type="checkbox" name="smsAlert"
+                                           class="btn  btn-sm btn-danger" checked
+                                           id="smsAlert"
+                                           switch="none"/>
+                                    <label for="smsAlert"
+                                           data-on-label="On"
+                                           data-off-label="Off"></label>
+                                @else
+                                    <input type="checkbox" name="smsAlert"
+                                           class="btn  btn-sm btn-danger"
+                                           id="smsAlert"
+                                           switch="none"/>
+                                    <label for="smsAlert"
+                                           data-on-label="On"
+                                           data-off-label="Off"></label>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <div class="card">
+                    <div class="card-body">
                         <div class="row">
                             <div class="form-group col-md-2">
                                 <button type="submit"
@@ -269,9 +311,9 @@
                                         class="btn btn-danger btn-block ">{{ __('add_user_cancel_btn') }}</button>
                             </div>
                         </div>
-                    </form> <!-- /form -->
-                </div><!-- /card body -->
-            </div><!-- /card -->
+                    </div>
+                </div>
+            </form> <!-- /form -->
         </div> <!-- ./container -->
     </div><!-- ./wrapper -->
 @endsection

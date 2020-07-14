@@ -327,6 +327,7 @@ class UserController extends Controller
             'password.required' => 'Password should be provided!',
             'password.confirmed' => 'Passwords didn\'t match!',
             'phone.numeric' => 'Phone number can only contain numbers!',
+            'phone.digits' => 'Phone number must be 10 digits or empty!',
             'userRole.required' => 'User role should be provided!',
             'userRole.numeric' => 'User role should be provided!',
             'dob.required' => 'Date of birth should be provided!',
@@ -358,7 +359,7 @@ class UserController extends Controller
             $validator = \Validator::make($request->all(), [
                 'nic' => 'required|max:15',
                 'email' => 'nullable|email|max:255',
-                'phone' => 'nullable|numeric',
+                'phone' => 'nullable|numeric|digits:10',
                 'dob' => 'required|date|before:today',
 
             ], $validationMessages);
@@ -438,12 +439,23 @@ class UserController extends Controller
         $user->email = $request['email'];
         $user->username = $request['username'];
         $user->bday =  date('Y-m-d', strtotime($request['dob']));
+
+        //login sms alert setting
+        if($request['smsAlert'] ==  'on'){
+            $user->login_alert = 1;
+        }
+        else{
+            $user->login_alert = 0;
+        }
+        //login sms alert setting end
+
         $user->save();
         //update in user table  end
 
         //update in selected user role details
 
         //update in selected user role details end
+
 
         return response()->json(['success' => 'User Registered Successfully!']);
 
