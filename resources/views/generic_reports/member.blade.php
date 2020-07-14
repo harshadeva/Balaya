@@ -81,7 +81,7 @@
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label for="pollingBooth"
-                                               class="control-label">{{ __('Polling Booth') }}</label>
+                                               class="control-label">{{ __('Member Division') }}</label>
 
                                         <select name="pollingBooth" id="pollingBooth"
                                                 class="select2 form-control "
@@ -261,7 +261,7 @@
                                                     <th>EMAIL</th>
                                                     <th>CONTACT NO</th>
                                                     <th>ELECTION DIVISION</th>
-                                                    <th>POLLING BOOTH</th>
+                                                    <th>MEMBER DIVISION</th>
                                                     <th>GRAMASEWA DIVISION</th>
                                                     <th>VILLAGE</th>
                                                     <th>ETHNICITY</th>

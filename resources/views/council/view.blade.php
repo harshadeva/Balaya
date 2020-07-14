@@ -150,7 +150,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th>ELECTION DIVISION</th>
-                                                    <th>POLLING BOOTH</th>
+                                                    <th>MEMBER DIVISION</th>
                                                     <th>GRAMASEWA DIVISION</th>
                                                 </tr>
                                                 </thead>
@@ -188,24 +188,25 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4 mb-1">
-                                    <input type="text" placeholder="Search election division here"
+                                    <input type="text" placeholder="Search election division"
                                            class="float-right form-control filters" id="searchE">
                                 </div>
                                 <div class="col-md-4 mb-1">
-                                    <input type="text" placeholder="Search polling booth here"
+                                    <input type="text" placeholder="Search member division"
                                            class="float-right form-control filters" id="searchP">
                                 </div>
                                 <div class="col-md-4 mb-1">
-                                    <input type="text" placeholder="Search division name here"
+                                    <input type="text" placeholder="Search gramasewa division"
                                            class="float-right form-control filters" id="searchG">
                                 </div>
                                 <div class="col-md-12">
                                     <button style="display: none;" id="assignBtn"
-                                           onclick="assignDivision()" class="btn btn-primary float-right m-2">Save Selected
+                                            onclick="assignDivision()" class="btn btn-primary float-right m-2">Save
+                                        Selected
                                     </button>
                                 </div>
                             </div>
-                            <input type="hidden" id="councilId" >
+                            <input type="hidden" id="councilId">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="table-rep-plugin">
@@ -216,7 +217,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th>ELECTION DIVISION</th>
-                                                    <th>POLLING BOOTH</th>
+                                                    <th>MEMBER DIVISION</th>
                                                     <th>GRAMASEWA DIVISION</th>
                                                     <th>ACTIONS</th>
                                                 </tr>
@@ -333,7 +334,7 @@
                         let divisions = data.success;
                         console.log(divisions);
                         $('#assignTBody').html('');
-                        if(divisions.length > 0) {
+                        if (divisions.length > 0) {
                             $.each(divisions, function (key, value) {
                                 $('#assignTBody').append("" +
                                     "<tr>" +
@@ -344,7 +345,7 @@
                                     "</tr>");
                             });
                         }
-                        else{
+                        else {
                             $('#assignTBody').html('<tr><td class="text-center" colspan="8">All Gramasewa divisions has assigned in this district.</td> </tr>');
                         }
                         divisionsArray = [];
@@ -386,7 +387,43 @@
             $('#assignBtn').hide();
         });
 
+        $("#searchE").keyup(function () {
+            if ($(this).find("td").eq(0).text().search(new RegExp(filter0, "i")) < 0) {
+                $(this).addClass('electionFilter');
 
+            } else {
+                $(this).removeClass('electionFilter');
+
+            }
+        });
+
+        $("#searchP").keyup(function () {
+            if ($(this).find("td").eq(0).text().search(new RegExp(filter0, "i")) < 0) {
+                $(this).addClass('pollingFilter');
+
+            } else {
+                $(this).removeClass('pollingFilter');
+
+            }
+        });
+
+        $("#searchG").keyup(function () {
+            if ($(this).find("td").eq(0).text().search(new RegExp(filter0, "i")) < 0) {
+                $(this).addClass('gramasewaFilter');
+
+            } else {
+                $(this).removeClass('gramasewaFilter');
+
+            }
+        });
+        
+       function () {
+           
+       } filter(){
+            
+        }
+
+        
         $(".filters").keyup(function () {
 
             $("#assignTBody tr").each(function () {
@@ -438,7 +475,7 @@
             $.ajax({
                 url: '{{route('assignedGramasewaCouncil')}}',
                 type: 'POST',
-                data: {id: id,divisionsArray:divisionsArray},
+                data: {id: id, divisionsArray: divisionsArray},
                 success: function (data) {
                     if (data.errors != null) {
                         $('#errorAlertAssign').show();

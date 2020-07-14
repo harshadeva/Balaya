@@ -152,7 +152,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th>ELECTION DIVISION</th>
-                                                    <th>POLLING BOOTH</th>
+                                                    <th>MEMBER DIVISION</th>
                                                     <th>GRAMASEWA DIVISION</th>
                                                 </tr>
                                                 </thead>
@@ -190,15 +190,15 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4 mb-1">
-                                    <input type="text" placeholder="Search election division here"
+                                    <input type="text" placeholder="Search election division"
                                            class="float-right form-control filters" id="searchE">
                                 </div>
                                 <div class="col-md-4 mb-1">
-                                    <input type="text" placeholder="Search polling booth here"
+                                    <input type="text" placeholder="Search member division"
                                            class="float-right form-control filters" id="searchP">
                                 </div>
                                 <div class="col-md-4 mb-1">
-                                    <input type="text" placeholder="Search division name here"
+                                    <input type="text" placeholder="Search gramasewa division"
                                            class="float-right form-control filters" id="searchG">
                                 </div>
                                 <div class="col-md-12">
@@ -218,7 +218,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th>ELECTION DIVISION</th>
-                                                    <th>POLLING BOOTH</th>
+                                                    <th>MEMBER DIVISION</th>
                                                     <th>GRAMASEWA DIVISION</th>
                                                     <th>ACTIONS</th>
                                                 </tr>

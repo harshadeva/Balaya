@@ -134,7 +134,7 @@
                                                 <tr>
                                                     <th>NAME</th>
                                                     <th>ELECTION D.</th>
-                                                    <th>POLLING B.</th>
+                                                    <th>MEMBER D.</th>
                                                     <th>GRAMASEWA D.</th>
                                                     <th>VILLAGE</th>
                                                     <th>NIC</th>
@@ -478,7 +478,7 @@
                             </div>
                         </div>
                         <div class="form-group col-md-6 hideManagement hierarchy">
-                            <label for="pollingBoothV">{{ __('Polling Booth') }}</label>
+                            <label for="pollingBoothV">{{ __('Member Division') }}</label>
                             <div>
                                 <div class="input-group">
                                     <div class="input-group-append">

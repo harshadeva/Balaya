@@ -154,7 +154,7 @@ class PostController extends Controller
                 if ($selected != null) {
                     array_push($electionArray, $selected->idelection_division);
                 } else {
-                    return response()->json(['errors' => ['error' => 'Polling booths Invalid!']]);
+                    return response()->json(['errors' => ['error' => 'Member divisions Invalid!']]);
                 }
             }
         } else {

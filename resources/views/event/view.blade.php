@@ -24,7 +24,7 @@
                                             <th>STATUS</th>
                                             <th>DISTRICT</th>
                                             <th>ELECTION DIVISION</th>
-                                            <th>POLLING BOOTH</th>
+                                            <th>MEMBER DIVISION</th>
                                             <th>GRAMASEWA DIVISION</th>
                                             <th>VILLAGE</th>
                                             <th>LOCATION</th>

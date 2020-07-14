@@ -29,9 +29,9 @@
                                         <div class="flex-fill">
                                         <select id="pollingBooth" name="pollingBooth" class="form-control noClear select2"
                                                 onchange="setCustomValidity('');showTableData()"
-                                                oninvalid="this.setCustomValidity('Please select polling booth')"
+                                                oninvalid="this.setCustomValidity('Please select member division')"
                                                 required>
-                                            <option value=""  selected>Select polling booth</option>
+                                            <option value=""  selected>Select member division</option>
                                             @if($pollingBooths != null)
                                                 @foreach($pollingBooths as $pollingBooth)
                                                     <option value="{{$pollingBooth->idpolling_booth}}">{{strtoupper($pollingBooth->name_en)}}</option>
@@ -180,9 +180,9 @@
                                         </div>
                                         <select id="pollingBoothU" name="pollingBooth" class="form-control"
                                                 onchange="setCustomValidity('')"
-                                                oninvalid="this.setCustomValidity('Please select polling booth')"
+                                                oninvalid="this.setCustomValidity('Please select member division')"
                                                 required>
-                                            <option value="" disabled selected>Select polling booth</option>
+                                            <option value="" disabled selected>Select member division</option>
                                             @if($pollingBooths != null)
                                                 @foreach($pollingBooths as $pollingBooth)
                                                     <option value="{{$pollingBooth->idpolling_booth}}">{{strtoupper($pollingBooth->name_en)}}</option>

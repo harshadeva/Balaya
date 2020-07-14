@@ -80,8 +80,8 @@ class GramasewaDivisionController extends Controller
             'gramasewaDivision_ta' => 'required|max:100',
 
         ], [
-            'pollingBooth.required' => 'Polling Booth should be provided!',
-            'pollingBooth.exists' => 'Polling Booth invalid!',
+            'pollingBooth.required' => 'Member division should be provided!',
+            'pollingBooth.exists' => 'Member division invalid!',
             'gramasewaDivision.required' => 'Gramasewa Division should be provided!',
             'gramasewaDivision_si.required' => 'Gramasewa Division (Sinhala) should be provided!',
             'gramasewaDivision_ta.required' => 'Gramasewa Division (Tamil) should be provided!',
@@ -150,8 +150,8 @@ class GramasewaDivisionController extends Controller
 
         ], [
             'updateId.required' => 'Update process has failed!',
-            'pollingBooth.required' => 'Polling Booth should be provided!',
-            'pollingBooth.exists' => 'Polling Booth invalid!',
+            'pollingBooth.required' => 'Member division should be provided!',
+            'pollingBooth.exists' => 'Member division invalid!',
             'gramasewaDivision.required' => 'Gramasewa Division should be provided!',
             'gramasewaDivision_si.required' => 'Gramasewa Division (Sinhala) should be provided!',
             'gramasewaDivision_ta.required' => 'Gramasewa Division (Tamil) should be provided!',
@@ -239,7 +239,7 @@ class GramasewaDivisionController extends Controller
     }
 
     public function getUnAssigned(Request $request){
-        return response()->json(['success' => GramasewaDivision::with(['pollingBooth','pollingBooth.electionDivision'])->where('iddivisional_secretariat',null)->where('status',1)->get()]);
+        return response()->json(['success' => GramasewaDivision::with(['pollingBooth','pollingBooth.electionDivision'])->where('iddivisional_secretariat',null)->where('iddistrict',Auth::user()->office->iddistrict)->where('status',1)->get()]);
     }
 
     public function getByCouncil(Request $request){
