@@ -287,7 +287,7 @@
 
         });
         function clearAll() {
-            $('input').not(':checkbox').val('');
+            $('input').not(':checkbox').not('.noClear').val('');
             $('textarea').val('');
             $(":checkbox").attr('checked', false).trigger('change');
             $(":radio").attr('checked', false).trigger('change');

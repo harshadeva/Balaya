@@ -337,7 +337,7 @@
         });
 
         function clearAll() {
-            $('input').val('').attr('checked', false);
+            $('input').not('.noClear').val('').attr('checked', false);
             $('select').val('').trigger('change');
         }
 
