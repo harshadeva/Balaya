@@ -17,6 +17,10 @@ class Office extends Model
         return $this->hasMany(Payment::class,'idoffice');
     }
 
+    public function officeModule(){
+        return $this->hasMany(OfficeModule::class,'idoffice');
+    }
+
     public function district(){
         return $this->belongsTo(District::class,'iddistrict');
     }

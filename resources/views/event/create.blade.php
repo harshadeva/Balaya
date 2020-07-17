@@ -217,7 +217,7 @@
                             </div>
                             <div class="form-group col-md-12">
                                 <label for="pollingBooth"
-                                       class="control-label">{{ __('Polling Booth') }}</label>
+                                       class="control-label">{{ __('Member Division') }}</label>
 
                                 <select name="pollingBooth" id="pollingBooth"
                                         class="select2 form-control "
@@ -287,7 +287,7 @@
 
         });
         function clearAll() {
-            $('input').not(':checkbox').val('');
+            $('input').not(':checkbox').not('.noClear').val('');
             $('textarea').val('');
             $(":checkbox").attr('checked', false).trigger('change');
             $(":radio").attr('checked', false).trigger('change');

@@ -364,9 +364,13 @@
                                     <span
                                             class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                             <ul class="list-unstyled">
-                                @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 8 )
+                                @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 9 )
 
                                 <li><a href="{{route('welcomeMessage')}}">{{ __('Welcome SMS') }}</a></li>
+                                @endif
+
+                            @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 8 )
+
                                     <li><a href="{{route('createSms')}}">{{ __('Send SMS') }}</a></li>
                                     <li><a href="{{route('sendGroup')}}">{{ __('Send Group SMS') }}</a></li>
 

@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\District;
 use App\Office;
+use App\OfficeModule;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OfficeController extends Controller
 {
@@ -75,6 +77,20 @@ class OfficeController extends Controller
             $sms = 0;
         }
 
+        if ($request['canvassing'] == 'on') {
+            $canvassing = 1;
+            $subTotal += 5000;
+        } else {
+            $canvassing = 0;
+        }
+
+        if ($request['map'] == 'on') {
+            $map = 1;
+            $subTotal += 5000;
+        } else {
+            $map = 0;
+        }
+
         $netTotal = round($subTotal - $request['discount'], 2);
         if ($netTotal < 0) {
             return response()->json(['errors' => ['error' => 'Total monthly payment must be grater than zero(0)']]);
@@ -99,6 +115,10 @@ class OfficeController extends Controller
         $office->save();
 
         //save in user table  end
+
+        //save in module tables
+        $this->officeModules($office->idoffice,$analysis,$sms,$canvassing,$map,$attendance);
+        //save in module tables end
 
         return response()->json(['success' => 'Office Registered Successfully!']);
     }
@@ -137,7 +157,7 @@ class OfficeController extends Controller
     public function getById(Request $request)
     {
         $id = $request['id'];
-        $office = Office::find(intval($id));
+        $office = Office::with('officeModule')->find(intval($id));
         $office->payment_date = date('m/d/Y', strtotime($office->payment_date));
         return $office;
     }
@@ -190,6 +210,19 @@ class OfficeController extends Controller
         } else {
             $sms = 0;
         }
+        if ($request['canvassing'] == 'on') {
+            $canvassing = 1;
+            $subTotal += 5000;
+        } else {
+            $canvassing = 0;
+        }
+
+        if ($request['map'] == 'on') {
+            $map = 1;
+            $subTotal += 5000;
+        } else {
+            $map = 0;
+        }
 
 
         $netTotal = round($subTotal - $request['discount'], 2);
@@ -231,6 +264,9 @@ class OfficeController extends Controller
         $office->save();
 
         //save in user table  end
+        //save in module tables
+        $this->officeModules($office->idoffice,$analysis,$sms,$canvassing,$map,$attendance);
+        //save in module tables end
 
         return response()->json(['success' => 'Office Registered Successfully!']);
     }
@@ -273,6 +309,80 @@ class OfficeController extends Controller
         } else {
             return response()->json(['errors' => ['error'=>'Office invalid!']]);
 
+        }
+
+    }
+
+    public function officeModules($office,$analysis,$sms,$canvassing,$map,$attendance){
+
+        $module = OfficeModule::where('idmodule',1)->where('idoffice',$office)->first();
+        if($module != null){
+            $module->status = $analysis;
+            $module->save();
+        }
+        else{
+            $module = new OfficeModule();
+            $module->idmodule = 1;
+            $module->idoffice = $office;
+            $module->status = $analysis;
+            $module->expire_at = date('Y-m-d', strtotime(date('Y-m-d') . ' +10 year'));
+            $module->save();
+        }
+
+        $module = OfficeModule::where('idmodule',2)->where('idoffice',$office)->first();
+        if($module != null){
+            $module->status = $sms;
+            $module->save();
+        }
+        else{
+            $module = new OfficeModule();
+            $module->idmodule = 2;
+            $module->idoffice = $office;
+            $module->status = $sms;
+            $module->expire_at = date('Y-m-d', strtotime(date('Y-m-d') . ' +10 year'));
+            $module->save();
+        }
+
+        $module = OfficeModule::where('idmodule',3)->where('idoffice',$office)->first();
+        if($module != null){
+            $module->status = $canvassing;
+            $module->save();
+        }
+        else{
+            $module = new OfficeModule();
+            $module->idmodule = 3;
+            $module->idoffice = $office;
+            $module->status = $canvassing;
+            $module->expire_at = date('Y-m-d', strtotime(date('Y-m-d') . ' +10 year'));
+            $module->save();
+        }
+
+        $module = OfficeModule::where('idmodule',4)->where('idoffice',$office)->first();
+        if($module != null){
+            $module->status = $map;
+            $module->save();
+        }
+        else{
+            $module = new OfficeModule();
+            $module->idmodule = 4;
+            $module->idoffice = $office;
+            $module->status = $map;
+            $module->expire_at = date('Y-m-d', strtotime(date('Y-m-d') . ' +10 year'));
+            $module->save();
+        }
+
+        $module = OfficeModule::where('idmodule',5)->where('idoffice',$office)->first();
+        if($module != null){
+            $module->status = $attendance;
+            $module->save();
+        }
+        else{
+            $module = new OfficeModule();
+            $module->idmodule = 5;
+            $module->idoffice = $office;
+            $module->status = $attendance;
+            $module->expire_at = date('Y-m-d', strtotime(date('Y-m-d') . ' +10 year'));
+            $module->save();
         }
 
     }

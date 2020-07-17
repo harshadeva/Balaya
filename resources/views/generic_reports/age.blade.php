@@ -60,7 +60,7 @@
                             </div>
                             <div class="form-group col-md-5">
                                 <label for="pollingBooth"
-                                       class="control-label">{{ __('Polling Booth') }}</label>
+                                       class="control-label">{{ __('Member Division') }}</label>
 
                                 <select name="pollingBooth" id="pollingBooth"
                                         class="select2 form-control "

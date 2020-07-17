@@ -258,7 +258,7 @@
                                 </div>
                                 <div class="form-group col-md-12">
                                     <label for="pollingBooths"
-                                           class="control-label">{{ __('Polling Booths') }}</label>
+                                           class="control-label">{{ __('Member Division') }}</label>
 
                                     <select name="pollingBooths[]" id="pollingBooths"
                                             class="select2 form-control select2-multiple" multiple="multiple" multiple

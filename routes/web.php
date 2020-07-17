@@ -74,7 +74,6 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
                 Route::get('pending_response', 'ResponseAnalysisController@index')->name('pendingResponse');
 
                 //SMS
-                Route::get('welcome_message', 'SmsController@index')->name('welcomeMessage');
                 Route::get('save_group_sms', 'SmsController@saveGroupSms')->name('saveGroupSms');
                 Route::get('create_sms', 'SmsController@create')->name('createSms');
                 Route::get('send_group', 'SmsController@sendGroup')->name('sendGroup');
@@ -90,6 +89,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
                 Route::get('rejected_posts', 'PostController@rejected')->name('rejectedPosts');
 
                 //SMS
+                Route::get('welcome_message', 'SmsController@index')->name('welcomeMessage');
                 Route::get('rejected_sms', 'SmsController@rejectedSms')->name('rejectedSms');
                 Route::get('sent_sms', 'SmsController@sentSms')->name('sentSms');
                 Route::get('pending_sms', 'SmsController@pending')->name('pendingSms');

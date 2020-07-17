@@ -107,6 +107,7 @@
             $('.alert').hide();
             $('.alert').html("");
             let completed = true;
+            let sms = $('#message').val();
             //initialize alert and variables end
 
 
@@ -146,6 +147,7 @@
                                 message: 'Welcome SMS saved successfully.'
                             });
                             clearAll();
+                            $('#message').val(sms);
                         }
                     }
 

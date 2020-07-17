@@ -152,7 +152,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th>ELECTION DIVISION</th>
-                                                    <th>POLLING BOOTH</th>
+                                                    <th>MEMBER DIVISION</th>
                                                     <th>GRAMASEWA DIVISION</th>
                                                 </tr>
                                                 </thead>
@@ -190,15 +190,15 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4 mb-1">
-                                    <input type="text" placeholder="Search election division here"
+                                    <input type="text" placeholder="Search election division"
                                            class="float-right form-control filters" id="searchE">
                                 </div>
                                 <div class="col-md-4 mb-1">
-                                    <input type="text" placeholder="Search polling booth here"
+                                    <input type="text" placeholder="Search member division"
                                            class="float-right form-control filters" id="searchP">
                                 </div>
                                 <div class="col-md-4 mb-1">
-                                    <input type="text" placeholder="Search division name here"
+                                    <input type="text" placeholder="Search gramasewa division"
                                            class="float-right form-control filters" id="searchG">
                                 </div>
                                 <div class="col-md-12">
@@ -218,7 +218,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th>ELECTION DIVISION</th>
-                                                    <th>POLLING BOOTH</th>
+                                                    <th>MEMBER DIVISION</th>
                                                     <th>GRAMASEWA DIVISION</th>
                                                     <th>ACTIONS</th>
                                                 </tr>
@@ -387,105 +387,80 @@
         });
 
 
-//        $(".filters").keyup(function () {
-//
-//            $("#assignTBody tr").each(function () {
-//                var filter0 = $('#searchE').val();
-//                // If the list item does not contain the text phrase fade it out
-//                if ($(this).find("td").eq(0).text().search(new RegExp(filter0, "i")) < 0) {
-//                    $(this).fadeOut();
-//
-//                    // Show the list item if the phrase matches and increase the count by 1
-//                } else {
-//                    // Retrieve the input field text and reset the count to zero
-//                    var filter = $('#searchP').val();
-//
-//                    // Loop through the comment list
-//                    $("#assignTBody tr").each(function () {
-//
-//                        // If the list item does not contain the text phrase fade it out
-//                        if ($(this).find("td").eq(1).text().search(new RegExp(filter, "i")) < 0) {
-//                            $(this).fadeOut();
-//
-//                            // Show the list item if the phrase matches and increase the count by 1
-//                        } else {
-//                            // Retrieve the input field text and reset the count to zero
-//                            var filter3 = $('#searchG').val();
-//
-//                            // Loop through the comment list
-//                            $("#assignTBody tr").each(function () {
-//
-//                                // If the list item does not contain the text phrase fade it out
-//                                if ($(this).find("td").eq(2).text().search(new RegExp(filter3, "i")) < 0) {
-//                                    $(this).fadeOut();
-//
-//                                    // Show the list item if the phrase matches and increase the count by 1
-//                                } else {
-//                                    $(this).show();
-//                                }
-//                            });
-//                        }
-//                    });
-//                }
-//            });
-//        });
-
         $("#searchE").keyup(function () {
+            let search = this.value;
+            if(search) {
+                $("#assignTBody tr").each(function () {
+                    if ($(this).find("td").eq(0).text().search(new RegExp(search, "i")) < 0) {
+                        $(this).addClass('electionFilter');
 
-            // Retrieve the input field text and reset the count to zero
-            var filter = $(this).val();
+                    } else {
+                        $(this).removeClass('electionFilter');
 
-            // Loop through the comment list
-            $("#assignTBody tr").each(function () {
-
-                // If the list item does not contain the text phrase fade it out
-                if ($(this).find("td").eq(0).text().search(new RegExp(filter, "i")) < 0) {
-                    $(this).fadeOut();
-
-                    // Show the list item if the phrase matches and increase the count by 1
-                } else {
-                    $(this).show();
-                }
-            });
+                    }
+                });
+            }
+            else{
+                $("#assignTBody tr").each(function () {
+                    $(this).removeClass('electionFilter');
+                });
+            }
+            filter();
         });
 
         $("#searchP").keyup(function () {
+            let search = this.value;
+            if(search) {
+                $("#assignTBody tr").each(function () {
+                    if ($(this).find("td").eq(1).text().search(new RegExp(search, "i")) < 0) {
+                        $(this).addClass('pollingFilter');
 
-            // Retrieve the input field text and reset the count to zero
-            var filter = $(this).val();
+                    } else {
+                        $(this).removeClass('pollingFilter');
 
-            // Loop through the comment list
-            $("#assignTBody tr").each(function () {
-
-                // If the list item does not contain the text phrase fade it out
-                if ($(this).find("td").eq(1).text().search(new RegExp(filter, "i")) < 0) {
-                    $(this).fadeOut();
-
-                    // Show the list item if the phrase matches and increase the count by 1
-                } else {
-                    $(this).show();
-                }
-            });
+                    }
+                });
+            }
+            else{
+                $("#assignTBody tr").each(function () {
+                    $(this).removeClass('pollingFilter');
+                });
+            }
+            filter();
         });
 
         $("#searchG").keyup(function () {
+            let search = this.value;
+            if(search) {
+                $("#assignTBody tr").each(function () {
+                    if ($(this).find("td").eq(2).text().search(new RegExp(search, "i")) < 0) {
+                        $(this).addClass('gramasewaFilter');
 
-            // Retrieve the input field text and reset the count to zero
-            var filter = $(this).val();
+                    } else {
+                        $(this).removeClass('gramasewaFilter');
 
-            // Loop through the comment list
+                    }
+                });
+            }
+            else{
+                $("#assignTBody tr").each(function () {
+                    $(this).removeClass('gramasewaFilter');
+                });
+            }
+            filter();
+        });
+
+        function filter() {
+
             $("#assignTBody tr").each(function () {
-
-                // If the list item does not contain the text phrase fade it out
-                if ($(this).find("td").eq(2).text().search(new RegExp(filter, "i")) < 0) {
+                if($(this).hasClass('electionFilter') || $(this).hasClass('pollingFilter') || $(this).hasClass('gramasewaFilter')){
                     $(this).fadeOut();
-
-                    // Show the list item if the phrase matches and increase the count by 1
-                } else {
+                }
+                else{
                     $(this).show();
                 }
             });
-        });
+        }
 
         function assignDivision() {
             let id = $('#secretariatId').val();

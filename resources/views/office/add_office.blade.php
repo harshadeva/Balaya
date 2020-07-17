@@ -66,7 +66,7 @@
                         <div class="row">
                             <div style="text-align: center;" class="form-group col-md-2">
                                 <label style="margin-left: 5px;"
-                                       class="control-label ">{{ __('Analysis Feature') }}</label>
+                                       class="control-label ">{{ __('Analysis Module') }}</label>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <input name="analysis" onchange="calTotal()" type="checkbox" id="analysisBtn"
@@ -78,7 +78,7 @@
                             </div>
                             <div style="text-align: center;" class="form-group col-md-2">
                                 <label style="margin-left: 5px;"
-                                       class="control-label ">{{ __('Attendance Feature') }}</label>
+                                       class="control-label ">{{ __('Attendance Module') }}</label>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <input name="attendance" onchange="calTotal()" type="checkbox"
@@ -90,7 +90,7 @@
                             </div>
                             <div style="text-align: center;" class="form-group col-md-2">
                                 <label style="margin-left: 5px;"
-                                       class="control-label ">{{ __('SMS Feature') }}</label>
+                                       class="control-label ">{{ __('SMS Module') }}</label>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <input name="sms" onchange="calTotal()" type="checkbox"
@@ -100,7 +100,30 @@
                                     </div>
                                 </div>
                             </div>
-
+                            <div style="text-align: center;" class="form-group col-md-2">
+                                <label style="margin-left: 5px;"
+                                       class="control-label ">{{ __('Canvassing Module') }}</label>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input name="canvassing" onchange="calTotal()" type="checkbox"
+                                               id="canvassingBtn" switch="none"/>
+                                        <label for="canvassingBtn" data-on-label="On"
+                                               data-off-label="Off"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: center;" class="form-group col-md-2">
+                                <label style="margin-left: 5px;"
+                                       class="control-label ">{{ __('Map Module') }}</label>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input name="map" onchange="calTotal()" type="checkbox"
+                                               id="mapBtn" switch="none"/>
+                                        <label for="mapBtn" data-on-label="On"
+                                               data-off-label="Off"></label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <br/>
                         <h6 class="text-secondary">Payment Details</h6>
@@ -197,7 +220,7 @@
         });
 
         function clearAll() {
-            $('input').not(':checkbox').val('');
+            $('input').not(':checkbox').not('.noClear').val('');
             $(":checkbox").attr('checked', false).trigger('change');
             $('select').val('').trigger('change');
         }
@@ -273,21 +296,29 @@
         });
 
         function calTotal() {
-            attendance = $('#attendanceBtn').prop('checked');
-            analysis = $('#analysisBtn').prop('checked');
-            sms = $('#smsBtn').prop('checked');
-            payment = $('#payment').val() ? parseFloat($('#payment').val()) < 0 ? 0 : parseFloat($('#payment').val()) : 0;
-            discount = $('#discount').val() ? parseFloat($('#discount').val()) < 0 ? 0 : parseFloat($('#discount').val()) : 0;
+          let  attendance = $('#attendanceBtn').prop('checked');
+          let  analysis = $('#analysisBtn').prop('checked');
+          let  sms = $('#smsBtn').prop('checked');
+          let  canvassing = $('#canvassingBtn').prop('checked');
+          let  map = $('#mapBtn').prop('checked');
+          let  payment = $('#payment').val() ? parseFloat($('#payment').val()) < 0 ? 0 : parseFloat($('#payment').val()) : 0;
+          let  discount = $('#discount').val() ? parseFloat($('#discount').val()) < 0 ? 0 : parseFloat($('#discount').val()) : 0;
 
             total = payment;
             if (attendance) {
-                total += 5000;
+                total += parseFloat('{{\App\Module::where('name','Attendance')->first()->payment}}');
             }
             if (analysis) {
-                total += 5000;
+                total += parseFloat('{{\App\Module::where('name','Analysis')->first()->payment}}');
             }
             if (sms) {
-                total += 5000;
+                total += parseFloat('{{\App\Module::where('name','SMS')->first()->payment}}');
+            }
+            if (canvassing) {
+                total += parseFloat('{{\App\Module::where('name','Canvassing')->first()->payment}}');
+            }
+            if (map) {
+                total += parseFloat('{{\App\Module::where('name','Map')->first()->payment}}');
             }
 
             let netTotal = total - discount;

@@ -85,7 +85,7 @@
                                                                         <div class="dropdown-menu"
                                                                              aria-labelledby="dropdownMenuButton">
                                                                             <a href="#"
-                                                                               onclick="assignedDivision({{$council->idcouncil}})"
+                                                                               onclick="assignedDivisions({{$council->idcouncil}})"
                                                                                class="dropdown-item">Assign New
                                                                             </a>
                                                                             <a href="#"
@@ -150,7 +150,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th>ELECTION DIVISION</th>
-                                                    <th>POLLING BOOTH</th>
+                                                    <th>MEMBER DIVISION</th>
                                                     <th>GRAMASEWA DIVISION</th>
                                                 </tr>
                                                 </thead>
@@ -188,24 +188,25 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4 mb-1">
-                                    <input type="text" placeholder="Search election division here"
+                                    <input type="text" placeholder="Search election division"
                                            class="float-right form-control filters" id="searchE">
                                 </div>
                                 <div class="col-md-4 mb-1">
-                                    <input type="text" placeholder="Search polling booth here"
+                                    <input type="text" placeholder="Search member division"
                                            class="float-right form-control filters" id="searchP">
                                 </div>
                                 <div class="col-md-4 mb-1">
-                                    <input type="text" placeholder="Search division name here"
+                                    <input type="text" placeholder="Search gramasewa division"
                                            class="float-right form-control filters" id="searchG">
                                 </div>
                                 <div class="col-md-12">
                                     <button style="display: none;" id="assignBtn"
-                                           onclick="assignDivision()" class="btn btn-primary float-right m-2">Save Selected
+                                            onclick="assignDivision()" class="btn btn-primary float-right m-2">Save
+                                        Selected
                                     </button>
                                 </div>
                             </div>
-                            <input type="hidden" id="councilId" >
+                            <input type="hidden" id="councilId">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="table-rep-plugin">
@@ -216,7 +217,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th>ELECTION DIVISION</th>
-                                                    <th>POLLING BOOTH</th>
+                                                    <th>MEMBER DIVISION</th>
                                                     <th>GRAMASEWA DIVISION</th>
                                                     <th>ACTIONS</th>
                                                 </tr>
@@ -281,7 +282,6 @@
                     if (data.success != null) {
 
                         let divisions = data.success;
-                        console.log(divisions);
                         $('#viewTBody').html('');
                         $.each(divisions, function (key, value) {
                             $('#viewTBody').append('' +
@@ -297,7 +297,7 @@
             });
         }
 
-        function assignedDivision(id) {
+        function assignedDivisions(id) {
             $('#councilId').val(id);
             $('.alert').hide();
             $('.alert').html("");
@@ -331,9 +331,8 @@
                     if (data.success != null) {
 
                         let divisions = data.success;
-                        console.log(divisions);
                         $('#assignTBody').html('');
-                        if(divisions.length > 0) {
+                        if (divisions.length > 0) {
                             $.each(divisions, function (key, value) {
                                 $('#assignTBody').append("" +
                                     "<tr>" +
@@ -344,7 +343,7 @@
                                     "</tr>");
                             });
                         }
-                        else{
+                        else {
                             $('#assignTBody').html('<tr><td class="text-center" colspan="8">All Gramasewa divisions has assigned in this district.</td> </tr>');
                         }
                         divisionsArray = [];
@@ -386,49 +385,80 @@
             $('#assignBtn').hide();
         });
 
+        $("#searchE").keyup(function () {
+            let search = this.value;
+            if(search) {
+                $("#assignTBody tr").each(function () {
+                    if ($(this).find("td").eq(0).text().search(new RegExp(search, "i")) < 0) {
+                        $(this).addClass('electionFilter');
 
-        $(".filters").keyup(function () {
+                    } else {
+                        $(this).removeClass('electionFilter');
 
-            $("#assignTBody tr").each(function () {
-                var filter0 = $('#searchE').val();
-                // If the list item does not contain the text phrase fade it out
-                if ($(this).find("td").eq(0).text().search(new RegExp(filter0, "i")) < 0) {
-                    $(this).fadeOut();
+                    }
+                });
+            }
+            else{
+                $("#assignTBody tr").each(function () {
+                    $(this).removeClass('electionFilter');
+                });
+            }
+            filter();
+        });
 
-                    // Show the list item if the phrase matches and increase the count by 1
-                } else {
-                    // Retrieve the input field text and reset the count to zero
-                    var filter = $('#searchP').val();
+        $("#searchP").keyup(function () {
+            let search = this.value;
+            if(search) {
+                $("#assignTBody tr").each(function () {
+                    if ($(this).find("td").eq(1).text().search(new RegExp(search, "i")) < 0) {
+                        $(this).addClass('pollingFilter');
 
-                    // Loop through the comment list
+                    } else {
+                        $(this).removeClass('pollingFilter');
+
+                    }
+                });
+            }
+            else{
                     $("#assignTBody tr").each(function () {
-
-                        // If the list item does not contain the text phrase fade it out
-                        if ($(this).find("td").eq(1).text().search(new RegExp(filter, "i")) < 0) {
-                            $(this).fadeOut();
-
-                            // Show the list item if the phrase matches and increase the count by 1
-                        } else {
-                            // Retrieve the input field text and reset the count to zero
-                            var filter3 = $('#searchG').val();
-
-                            // Loop through the comment list
-                            $("#assignTBody tr").each(function () {
-
-                                // If the list item does not contain the text phrase fade it out
-                                if ($(this).find("td").eq(2).text().search(new RegExp(filter3, "i")) < 0) {
-                                    $(this).fadeOut();
-
-                                    // Show the list item if the phrase matches and increase the count by 1
-                                } else {
-                                    $(this).show();
-                                }
-                            });
-                        }
+                        $(this).removeClass('pollingFilter');
                     });
                 }
-            });
+            filter();
         });
+
+        $("#searchG").keyup(function () {
+            let search = this.value;
+            if(search) {
+                $("#assignTBody tr").each(function () {
+                if ($(this).find("td").eq(2).text().search(new RegExp(search, "i")) < 0) {
+                    $(this).addClass('gramasewaFilter');
+
+                } else {
+                    $(this).removeClass('gramasewaFilter');
+
+                }
+            });
+            }
+            else{
+                $("#assignTBody tr").each(function () {
+                    $(this).removeClass('gramasewaFilter');
+                });
+            }
+            filter();
+        });
+        
+       function filter() {
+
+           $("#assignTBody tr").each(function () {
+               if($(this).hasClass('electionFilter') || $(this).hasClass('pollingFilter') || $(this).hasClass('gramasewaFilter')){
+                   $(this).fadeOut();
+               }
+               else{
+                   $(this).show();
+               }
+           });
+       }
 
         function assignDivision() {
             let id = $('#councilId').val();
@@ -438,7 +468,7 @@
             $.ajax({
                 url: '{{route('assignedGramasewaCouncil')}}',
                 type: 'POST',
-                data: {id: id,divisionsArray:divisionsArray},
+                data: {id: id, divisionsArray: divisionsArray},
                 success: function (data) {
                     if (data.errors != null) {
                         $('#errorAlertAssign').show();

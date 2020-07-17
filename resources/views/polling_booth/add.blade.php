@@ -47,7 +47,7 @@
                             @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3 || \Illuminate\Support\Facades\Auth::user()->iduser_role == 5)
 
                             <div class="form-group col-md-6">
-                                <label for="pollingBooth">{{ __('Member Division Name') }}</label>
+                                <label for="pollingBooth">{{ __('Member Division') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">

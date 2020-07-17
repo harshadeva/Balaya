@@ -149,7 +149,7 @@
         });
 
         function clearAll() {
-            $('input').not(':checkbox').val('');
+            $('input').not(':checkbox').not('.noClear').val('');
             $(":checkbox").attr('checked', false).trigger('change');
             $('select').val('').trigger('change');
         }

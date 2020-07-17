@@ -44,7 +44,7 @@ class PollingBoothController extends Controller
     {
         $id  = intval($request['id']);
         $result = PollingBooth::where('idelection_division',$id)->latest()->where('status',1)->get();
-        return response()->json(['success'  => $result]);
+        return response()->json(['success'  => $result,'secretariat']);
     }
 
     public function getByElectionDivisions(Request $request)
@@ -84,12 +84,12 @@ class PollingBoothController extends Controller
         ], [
             'electionDivision.required' => 'Election Division should be provided!',
             'electionDivision.exists' => 'Election Division invalid!',
-            'pollingBooth.required' => 'Polling Booth should be provided!',
-            'pollingBooth_si.required' => 'Polling Booth (Sinhala) should be provided!',
-            'pollingBooth_ta.required' => 'Polling Booth (Tamil) should be provided!',
-            'pollingBooth.max' => 'Polling Booth should be less than 100 characters long!',
-            'pollingBooth_si.max' => 'Polling Booth (Sinhala) should be less than 100 characters long!',
-            'pollingBooth_ta.max' => 'Polling Booth (Tamil) should be less than 100 characters long!',
+            'pollingBooth.required' => 'Member division should be provided!',
+            'pollingBooth_si.required' => 'Member division (Sinhala) should be provided!',
+            'pollingBooth_ta.required' => 'Member division (Tamil) should be provided!',
+            'pollingBooth.max' => 'Member division should be less than 100 characters long!',
+            'pollingBooth_si.max' => 'Member division (Sinhala) should be less than 100 characters long!',
+            'pollingBooth_ta.max' => 'Member division (Tamil) should be less than 100 characters long!',
 
         ]);
 
@@ -221,7 +221,7 @@ class PollingBoothController extends Controller
             $item->status = 1;
             $item->save();
         });
-        return response()->json(['success' => 'Polling booths confirmed']);
+        return response()->json(['success' => 'Member divisions confirmed']);
     }
 
     public function deleteRecord(Request $request){
