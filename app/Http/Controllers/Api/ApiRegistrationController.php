@@ -89,7 +89,7 @@ class ApiRegistrationController extends Controller
             'lastName' => 'nullable',
             'isGovernment' => 'nullable',
             'gender' => 'nullable|numeric',
-            'nic' => 'required|max:15|unique:usermaster',
+            'nic' => 'required|max:15',
             'email' => 'nullable|email|max:255',
             'phone' => 'required|regex:/^[0-9]*$/|min:10',
             'dob' => 'nullable|date|before:today',
@@ -105,7 +105,6 @@ class ApiRegistrationController extends Controller
         ], [
             'nic.required' => 'NIC No should be provided!',
             'nic.max' => 'NIC No invalid!',
-            'nic.unique' => 'NIC No already exist!',
             'title.required' => 'User title should be provided!',
             'title.numeric' => 'User title invalid!',
             'firstName.required' => 'First name should be provided!',
@@ -205,6 +204,25 @@ class ApiRegistrationController extends Controller
         } else {
             return response()->json(['error' => 'User role unknown!', 'statusCode' => -99]);
         }
+
+        //check is nic already taken by active user
+        if($request['userRole'] == 7){
+            $idExist = User::where('nic',$request['nic'])->where(function ($q)  use ($office){
+                $q->whereHas('member',function ($q) use ($office){
+                    $q->whereHas('memberAgents',function ($q) use ($office){
+                        $q->where('idoffice',$office)->whereIn('status', [1, 2]);
+                    });
+                });
+            })->exists();
+        }
+        else {
+            $idExist = User::where('nic', $request['nic'])->whereIn('status', [1, 2])->exists();
+        }
+        if($idExist == 1){
+            return response()->json(['errors' => ['error'=>'Another active user already exist with same NIC!']]);
+        }
+        //check is nic already taken by active user  end
+
 
         $memberStatus = $parentOffice->officeSetting != null && $parentOffice->officeSetting->member_auto == 1 ? 1 : 2;
         $agentStatus = $parentOffice->officeSetting != null && $parentOffice->officeSetting->agent_auto == 1 ? 1 : 2;

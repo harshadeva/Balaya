@@ -721,6 +721,7 @@
                     data: {id: id},
                     success: function (data) {
                         if (data.errors != null) {
+
                             notify({
                                 type: "error", //alert | success | error | warning | info
                                 title: 'DISABLE PROCESS INVALID!',
@@ -787,19 +788,22 @@
                     data: {id: id},
                     success: function (data) {
                         if (data.errors != null) {
-                            notify({
-                                type: "error", //alert | success | error | warning | info
-                                title: 'ENABLE PROCESS INVALID!',
-                                autoHide: true, //true | false
-                                delay: 2500, //number ms
-                                position: {
-                                    x: "right",
-                                    y: "top"
-                                },
-                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+                            $.each(data.errors, function (key, value) {
+                                notify({
+                                    type: "error", //alert | success | error | warning | info
+                                    title: 'ENABLE PROCESS INVALID!',
+                                    autoHide: true, //true | false
+                                    delay: 6000, //number ms
+                                    position: {
+                                        x: "right",
+                                        y: "top"
+                                    },
+                                    icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Something wrong with process.contact administrator..'
+                                    message: value
+                                });
                             });
+
                         }
                         if (data.success != null) {
 

@@ -8,6 +8,7 @@ use App\OfficeModule;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class OfficeController extends Controller
 {
@@ -31,6 +32,12 @@ class OfficeController extends Controller
      */
     public function store(Request $request)
     {
+        return  Validator::make($request, [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:usermaster',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
         //validation start
         $validator = \Validator::make($request->all(), [
             'district' => 'required|numeric|exists:district,iddistrict',

@@ -98,7 +98,7 @@ class UserController extends Controller
 
         if($request['userRole'] == 2 || $request['userRole'] == 3 || $request['userRole'] == 5 || $request['userRole'] == 6 || $request['userRole'] == 7) {
             $validationRules = [
-                'nic' => 'required|max:15|unique:usermaster',
+                'nic' => 'required|max:15',
                 'email' => 'nullable|email|max:255',
                 'phone' => 'nullable|numeric',
                 'dob' => 'required|date|before:today',
@@ -141,6 +141,24 @@ class UserController extends Controller
             return response()->json(['errors' => ['title'=>'Please re-check title and gender!']]);
 
         }
+
+        //check is nic already taken by active user
+        if($request['userRole'] == 7){
+            $idExist = User::where('nic',$request['nic'])->where(function ($q)  use ($office){
+                $q->whereHas('member',function ($q) use ($office){
+                    $q->whereHas('memberAgents',function ($q) use ($office){
+                        $q->where('idoffice',$office)->whereIn('status', [1, 2]);
+                    });
+                });
+            })->exists();
+        }
+        else {
+            $idExist = User::where('nic', $request['nic'])->whereIn('status', [1, 2])->exists();
+        }
+        if($idExist == 1){
+            return response()->json(['errors' => ['error'=>'Another active user already exist with same NIC!']]);
+        }
+        //check is nic already taken by active user  end
 
         //validation end
 
@@ -612,6 +630,31 @@ class UserController extends Controller
 
     public function enable(Request $request){
         $user = User::find(intval($request['id']));
+        if($user->iduser_role == 7){
+            $idExist = User::where('nic',$user->nic)->where('idUser','!=',$user->idUser)->where(function ($q){
+                $q->whereHas('member',function ($q){
+                    $q->whereHas('memberAgents',function ($q){
+                        $q->where('idoffice',Auth::user()->idoffice)->whereIn('status', [1, 2]);
+                    });
+                });
+            })->exists();
+        }
+        else if($user->iduser_role == 6){
+            $exist = Agent::where('idvillage',$request['village'])->whereHas('userBelongs',function ($q) {
+                $q->where('idoffice',Auth::user()->idoffice)->whereIn('status',[1,2,3]);
+            })->whereIn('status',[1,2,3])->first();
+            if($exist != null){
+                return response()->json(['error' => 'Agent has already assigned for this village!', 'statusCode' => -99]);
+            }
+
+            $idExist = User::where('nic', $user->nic)->where('idUser', '!=', $user->idUser)->whereIn('status', [1, 2])->exists();
+        }
+        else{
+            $idExist = User::where('nic', $user->nic)->where('idUser', '!=', $user->idUser)->whereIn('status', [1, 2])->exists();
+        }
+        if($idExist == 1){
+            return response()->json(['errors' => ['error'=>'Another active user already exist with same NIC!']]);
+        }
         if($user != null){
             if($user->iduser_role == 7){
 
@@ -626,7 +669,7 @@ class UserController extends Controller
                     return response()->json(['errors' => ['error'=>'User invalid!']]);
                 }
             }
-            else {
+            else if($user->iduser_role == 6){
                 $exist = Agent::where('idvillage',$user->agent->idvillage)->whereHas('userBelongs',function ($q) use ($user){
                     $q->where('idoffice',$user->idoffice)->whereIn('status',[1,2,3]);
                 })->whereIn('status',[1,2,3])->first();
@@ -635,6 +678,12 @@ class UserController extends Controller
                     return response()->json(['errors' => ['error'=>'Another active agent already exist in the village!']]);
                 }
 
+                if ($user->status == 0) {
+                    $user->status = 1;
+                    $user->save();
+                }
+            }
+            else{
                 if ($user->status == 0) {
                     $user->status = 1;
                     $user->save();
