@@ -614,6 +614,7 @@ class UserController extends Controller
         $user = User::find(intval($request['id']));
         if($user != null){
             if($user->iduser_role == 7){
+
                 $link = $user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first();
                 if($link != null) {
                     if ($link->status == 0) {
@@ -626,6 +627,14 @@ class UserController extends Controller
                 }
             }
             else {
+                $exist = Agent::where('idvillage',$user->agent->idvillage)->whereHas('userBelongs',function ($q) use ($user){
+                    $q->where('idoffice',$user->idoffice)->whereIn('status',[1,2,3]);
+                })->whereIn('status',[1,2,3])->first();
+
+                if($exist != null){
+                    return response()->json(['errors' => ['error'=>'Another active agent already exist in the village!']]);
+                }
+
                 if ($user->status == 0) {
                     $user->status = 1;
                     $user->save();
