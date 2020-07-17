@@ -77,6 +77,8 @@
                                                     <th>ANALYSIS MODULE</th>
                                                     <th>ATTENDANCE MODULE</th>
                                                     <th>SMS MODULE</th>
+                                                    <th>CANVASSING MODULE</th>
+                                                    <th>MAP MODULE</th>
                                                     <th>OFFICE  STATUS</th>
                                                     <th>CREATED AT</th>
                                                     <th>OPTION</th>
@@ -92,17 +94,27 @@
                                                                 <td style="text-align: right;">{{number_format($office->discount,2)}}</td>
                                                                 <td style="text-align: right;">{{number_format($office->monthly_payment,2)}}</td>
                                                                 <td>{{$office->payment_date}}</td>
-                                                                @if($office->analysis_available)
+                                                                @if($office->officeModule()->where('idmodule',1)->first() != null && $office->officeModule()->where('idmodule',1)->first()->status == 1)
                                                                     <td nowrap><em class="mdi mdi-checkbox-blank-circle text-success"></em> ENABLED</td>
                                                                 @else
                                                                     <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
                                                                 @endif
-                                                                @if($office->attendence_available)
+                                                                @if($office->officeModule()->where('idmodule',5)->first() != null && $office->officeModule()->where('idmodule',5)->first()->status == 1)
                                                                     <td nowrap><em class="mdi mdi-checkbox-blank-circle text-success"></em> ENABLED</td>
                                                                 @else
                                                                     <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
                                                                 @endif
-                                                                @if($office->sms_module)
+                                                                @if($office->officeModule()->where('idmodule',2)->first() != null && $office->officeModule()->where('idmodule',2)->first()->status == 1)
+                                                                    <td nowrap><em class="mdi mdi-checkbox-blank-circle text-success"></em> ENABLED</td>
+                                                                @else
+                                                                    <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
+                                                                @endif
+                                                                @if($office->officeModule()->where('idmodule',3)->first() != null && $office->officeModule()->where('idmodule',3)->first()->status == 1)
+                                                                    <td nowrap><em class="mdi mdi-checkbox-blank-circle text-success"></em> ENABLED</td>
+                                                                @else
+                                                                    <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
+                                                                @endif
+                                                                @if($office->officeModule()->where('idmodule',4)->first() != null && $office->officeModule()->where('idmodule',4)->first()->status == 1)
                                                                     <td nowrap><em class="mdi mdi-checkbox-blank-circle text-success"></em> ENABLED</td>
                                                                 @else
                                                                     <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
@@ -112,6 +124,7 @@
                                                                 @else
                                                                     <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
                                                                 @endif
+
                                                                 <td>{{$office->created_at}}</td>
                                                                 <td>
                                                                     <div class="dropdown">
@@ -241,11 +254,11 @@
                         <div class="row">
                             <div style="text-align: center;" class="form-group col-md-4">
                                 <label style="margin-left: 5px;"
-                                       class="control-label ">{{ __('Analysis Feature') }}</label>
+                                       class="control-label ">{{ __('Analysis Module') }}</label>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <input name="analysis" onchange="calTotal()" type="checkbox" id="analysisBtnU"
-                                               switch="none"/>
+                                          class="features"  switch="none"/>
                                         <label for="analysisBtnU" data-on-label="On"
                                                data-off-label="Off"></label>
                                     </div>
@@ -253,11 +266,11 @@
                             </div>
                             <div style="text-align: center;" class="form-group col-md-4">
                                 <label style="margin-left: 5px;"
-                                       class="control-label ">{{ __('Attendance Feature') }}</label>
+                                       class="control-label ">{{ __('Attendance Module') }}</label>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <input name="attendance" onchange="calTotal()" type="checkbox"
-                                               id="attendanceBtnU" switch="none"/>
+                                               class="features"        id="attendanceBtnU" switch="none"/>
                                         <label for="attendanceBtnU" data-on-label="On"
                                                data-off-label="Off"></label>
                                     </div>
@@ -265,12 +278,36 @@
                             </div>
                             <div style="text-align: center;" class="form-group col-md-4">
                                 <label style="margin-left: 5px;"
-                                       class="control-label ">{{ __('SMS Feature') }}</label>
+                                       class="control-label ">{{ __('SMS Module') }}</label>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <input name="sms" onchange="calTotal()" type="checkbox"
-                                               id="smsBtnU" switch="none"/>
+                                               class="features"     id="smsBtnU" switch="none"/>
                                         <label for="smsBtnU" data-on-label="On"
+                                               data-off-label="Off"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: center;" class="form-group col-md-4">
+                                <label style="margin-left: 5px;"
+                                       class="control-label ">{{ __('Canvassing Module') }}</label>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input name="canvassing" onchange="calTotal()" type="checkbox"
+                                               class="features"      id="canvassingBtnU" switch="none"/>
+                                        <label for="canvassingBtnU" data-on-label="On"
+                                               data-off-label="Off"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: center;" class="form-group col-md-4">
+                                <label style="margin-left: 5px;"
+                                       class="control-label ">{{ __('Map Module') }}</label>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input name="map" onchange="calTotal()" type="checkbox"
+                                               class="features"     id="mapBtnU" switch="none"/>
+                                        <label for="mapBtnU" data-on-label="On"
                                                data-off-label="Off"></label>
                                     </div>
                                 </div>
@@ -346,7 +383,7 @@
                                         class="btn btn-primary btn-block ">{{ __('Update Office') }}</button>
                             </div>
                             <div class="form-group col-md-2">
-                                <button type="submit" onclick="clearAll();event.preventDefault();"
+                                <button type="submit" onclick="clearAll();event.preventDefault();$('#updateModal').modal('hide');"
                                         class="btn btn-danger btn-block ">{{ __('Cancel') }}</button>
                             </div>
                         </div>
@@ -377,31 +414,53 @@
                 data: {id: id},
                 type: 'POST',
                 success: function (data) {
+                    console.log(data);
                     $('#districtU').val(data.iddistrict).trigger('change');
                     $('#officeNameU').val(data.office_name);
                     let subTotal = data.sub_total;
-                    if (data.analysis_available) {
-                        subTotal -= 5000;
-                        $('#analysisBtnU').prop('checked', true);
-
-                    }
-                    else {
-                        $('#analysisBtnU').prop('checked', false);
-                    }
-                    if (data.attendence_available) {
-                        subTotal -= 5000;
-                        $('#attendanceBtnU').prop('checked', true);
-                    }
-                    else {
-                        $('#attendanceBtnU').prop('checked', false);
-                    }
-                    if (data.sms_module) {
-                        subTotal -= 5000;
-                        $('#smsBtnU').prop('checked', true);
-                    }
-                    else {
-                        $('#smsBtnU').prop('checked', false);
-                    }
+                    $('.features').prop('checked',false);
+                    $.each(data.office_module, function (key, value) {
+                        if(value.idmodule == 1){
+                            if(value.status == 1){
+                                $('#analysisBtnU').prop('checked', true);
+                            }
+                            else{
+                                $('#analysisBtnU').prop('checked', false);
+                            }
+                        }
+                        else if(value.idmodule == 2){
+                            if(value.status == 1){
+                                $('#smsBtnU').prop('checked', true);
+                            }
+                            else{
+                                $('#smsBtnU').prop('checked', false);
+                            }
+                        }
+                        else if(value.idmodule == 3){
+                            if(value.status == 1){
+                                $('#canvassingBtnU').prop('checked', true);
+                            }
+                            else{
+                                $('#canvassingBtnU').prop('checked', false);
+                            }
+                        }
+                        else if(value.idmodule == 4){
+                            if(value.status == 1){
+                                $('#mapBtnU').prop('checked', true);
+                            }
+                            else{
+                                $('#mapBtnU').prop('checked', false);
+                            }
+                        }
+                        else if(value.idmodule == 5){
+                            if(value.status == 1){
+                                $('#attendanceBtnU').prop('checked', true);
+                            }
+                            else{
+                                $('#attendanceBtnU').prop('checked', false);
+                            }
+                        }
+                    });
                     $('#paymentU').val(subTotal);
                     $('#discountU').val(data.discount);
                     $('#paymentDateU').val(data.payment_date);
@@ -475,25 +534,37 @@
         });
 
         function calTotal() {
-            attendance = $('#attendanceBtnU').prop('checked');
-            analysis = $('#analysisBtnU').prop('checked');
-            payment = $('#paymentU').val() ? parseFloat($('#paymentU').val()) < 0 ? 0 : parseFloat($('#paymentU').val()) : 0;
-            discount = $('#discountU').val() ? parseFloat($('#discountU').val()) < 0 ? 0 : parseFloat($('#discountU').val()) : 0;
+            let  attendance = $('#attendanceBtnU').prop('checked');
+            let  analysis = $('#analysisBtnU').prop('checked');
+            let  sms = $('#smsBtnU').prop('checked');
+            let  canvassing = $('#canvassingBtnU').prop('checked');
+            let  map = $('#mapBtnU').prop('checked');
+            let  payment = $('#paymentU').val() ? parseFloat($('#paymentU').val()) < 0 ? 0 : parseFloat($('#paymentU').val()) : 0;
+            let  discount = $('#discountU').val() ? parseFloat($('#discountU').val()) < 0 ? 0 : parseFloat($('#discountU').val()) : 0;
 
             total = payment;
             if (attendance) {
-                total += 5000;
+                total += parseFloat('{{\App\Module::where('name','Attendance')->first()->payment}}');
             }
             if (analysis) {
-                total += 5000;
+                total += parseFloat('{{\App\Module::where('name','Analysis')->first()->payment}}');
+            }
+            if (sms) {
+                total += parseFloat('{{\App\Module::where('name','SMS')->first()->payment}}');
+            }
+            if (canvassing) {
+                total += parseFloat('{{\App\Module::where('name','Canvassing')->first()->payment}}');
+            }
+            if (map) {
+                total += parseFloat('{{\App\Module::where('name','Map')->first()->payment}}');
             }
 
             let netTotal = total - discount;
-            if (netTotal < 0) {
+            if(netTotal < 0 ){
                 $('#discountU').val(0);
                 calTotal();
             }
-            else {
+            else{
                 $('#totalU').val(netTotal);
 
             }

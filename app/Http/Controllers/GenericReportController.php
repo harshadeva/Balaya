@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Analysis;
 use App\Career;
+use App\Council;
+use App\DivisionalSecretariat;
 use App\EducationalQualification;
 use App\ElectionDivision;
 use App\Ethnicity;
+use App\GramasewaDivision;
 use App\NatureOfIncome;
 use App\Post;
 use App\PostResponse;
@@ -22,6 +25,8 @@ class GenericReportController extends Controller
     {
 
         $electionDivisions = ElectionDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        $secretariats = DivisionalSecretariat::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        $councils = Council::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
         $careers = Career::where('status', 1)->get();
         $religions = Religion::where('status', 1)->get();
         $incomes = NatureOfIncome::where('status', 1)->get();
@@ -62,15 +67,32 @@ class GenericReportController extends Controller
             $query = $query->whereHas('agent', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
-        } else if ($request['pollingBooth'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        } else if ($request['electionDivision'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
-            });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
+
 
         if ($request['ethnicity'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
@@ -130,7 +152,7 @@ class GenericReportController extends Controller
             'jobSector' => $request['jobSector']
         ]);
 
-        return view('generic_reports.agents')->with(['ethnicities' => $ethnicities, 'educations' => $educations, 'incomes' => $incomes, 'religions' => $religions, 'careers' => $careers, 'users' => $users, 'title' => 'Reports : Agents', 'electionDivisions' => $electionDivisions]);
+        return view('generic_reports.agents')->with(['ethnicities' => $ethnicities, 'educations' => $educations, 'incomes' => $incomes, 'religions' => $religions, 'careers' => $careers, 'users' => $users, 'title' => 'Reports : Agents', 'electionDivisions' => $electionDivisions, 'secretariats' => $secretariats, 'councils' => $councils]);
 
     }
 
@@ -138,6 +160,8 @@ class GenericReportController extends Controller
     {
 
         $electionDivisions = ElectionDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        $secretariats = DivisionalSecretariat::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        $councils = Council::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
         $careers = Career::where('status', 1)->get();
         $religions = Religion::where('status', 1)->get();
         $incomes = NatureOfIncome::where('status', 1)->get();
@@ -172,6 +196,7 @@ class GenericReportController extends Controller
                 $query = $query->where('email', 'like', '%' . $request['searchText'] . '%');
             }
         }
+
         if ($request['village'] != null) {
             $query = $query->whereHas('member', function ($q) use ($request) {
                 $q->where('idvillage', $request['vilage']);
@@ -180,15 +205,32 @@ class GenericReportController extends Controller
             $query = $query->whereHas('member', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
-        } else if ($request['pollingBooth'] != null) {
-            $query = $query->whereHas('member', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        } else if ($request['electionDivision'] != null) {
-            $query = $query->whereHas('member', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
-            });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query = $query->whereHas('member', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query = $query->whereHas('member', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
+
 
         if ($request['ethnicity'] != null) {
             $query = $query->whereHas('member', function ($q) use ($request) {
@@ -248,7 +290,7 @@ class GenericReportController extends Controller
             'jobSector' => $request['jobSector']
         ]);
 
-        return view('generic_reports.member')->with(['ethnicities' => $ethnicities, 'educations' => $educations, 'incomes' => $incomes, 'religions' => $religions, 'careers' => $careers, 'users' => $users, 'title' => 'Reports : Members', 'electionDivisions' => $electionDivisions]);
+        return view('generic_reports.member')->with(['ethnicities' => $ethnicities, 'educations' => $educations, 'incomes' => $incomes, 'religions' => $religions, 'careers' => $careers, 'users' => $users, 'title' => 'Reports : Members', 'electionDivisions' => $electionDivisions, 'secretariats' => $secretariats, 'councils' => $councils]);
 
     }
 
@@ -804,7 +846,7 @@ class GenericReportController extends Controller
         $query = Post::query();
 
         $posts = $query->where('idoffice', Auth::user()->idoffice)->where('status', 1)->get()->sortByDesc(function ($q) use ($tableColumn, $category, $column, $village, $gramasewa, $polling, $election, $start, $end) {
-            if($tableColumn != null) {
+            if ($tableColumn != null) {
                 if ($start != null && $end != null) {
                     return $q->responses()->whereHas('user', function ($q) use ($tableColumn, $column, $village, $gramasewa, $polling, $election) {
                         $q->whereHas('agent', function ($q) use ($tableColumn, $column, $village, $gramasewa, $polling, $election) {
@@ -871,7 +913,7 @@ class GenericReportController extends Controller
                         });
                     })->count();
                 }
-            }else{
+            } else {
                 if ($start != null && $end != null) {
                     return $q->responses()->whereBetween('created_at', [$start, $end])->count();
                 } else {

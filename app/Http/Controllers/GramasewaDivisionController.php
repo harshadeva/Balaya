@@ -248,7 +248,7 @@ class GramasewaDivisionController extends Controller
     }
 
     public function getUnCouncilled(){
-        return response()->json(['success' => GramasewaDivision::with(['pollingBooth','pollingBooth.electionDivision'])->where('idcouncil',null)->where('status',1)->get()]);
+        return response()->json(['success' => GramasewaDivision::with(['pollingBooth','pollingBooth.electionDivision'])->where('idcouncil',null)->where('iddistrict',Auth::user()->office->iddistrict)->where('status',1)->get()]);
     }
 
     /**
@@ -261,4 +261,5 @@ class GramasewaDivisionController extends Controller
     {
         //
     }
+
 }

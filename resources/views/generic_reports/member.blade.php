@@ -17,15 +17,15 @@
 @section('psContent')
     <div class="page-content-wrapper">
         <div class="container-fluid">
-            <div class="row">
+            <div  class="row">
                 <div class="col-lg-12">
                     <div class="card m-b-20">
                         <div class="card-body">
-                            <div class="row">
+                            <div   data-toggle="collapse"
+                                   href="#multiCollapseExample1" aria-expanded="false"
+                                   aria-controls="multiCollapseExample1" style="cursor: pointer;"   class="row">
                                 <div class="col-md-12">
-                                    <h6 data-toggle="collapse"
-                                        href="#multiCollapseExample1" aria-expanded="false"
-                                        aria-controls="multiCollapseExample1"><em class="fa fa-search"></em> Search
+                                    <h6 ><em class="fa fa-search"></em> Search
                                         Members</h6>
 
                                 </div>
@@ -51,6 +51,7 @@
                                                     <option value="2">LAST NAME</option>
                                                     <option value="3">NIC NO</option>
                                                     <option value="4">EMAIL</option>
+                                                    <option value="5">REFERRAL</option>
                                                 </select>
                                             </div>
                                             <input class="form-control " type="text" min="0"
@@ -62,59 +63,6 @@
                                     <input type="hidden" name="rows" id="rows">
 
 
-                                    <div class="form-group col-md-4">
-                                        <label for="electionDivision"
-                                               class="control-label">{{ __('Election Division') }}</label>
-
-                                        <select name="electionDivision" id="electionDivision"
-                                                class="select2 form-control "
-                                                onchange="electionDivisionChanged(this)"
-                                        >
-                                            <option value="">ALL</option>
-
-                                            @if($electionDivisions != null)
-                                                @foreach($electionDivisions as $electionDivision)
-                                                    <option value="{{$electionDivision->idelection_division}}">{{strtoupper($electionDivision->name_en)}}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label for="pollingBooth"
-                                               class="control-label">{{ __('Member Division') }}</label>
-
-                                        <select name="pollingBooth" id="pollingBooth"
-                                                class="select2 form-control "
-                                                onchange="pollingBoothChanged(this)"
-                                        >
-                                            <option value="">ALL</option>
-
-
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label for="gramasewaDivision"
-                                               class="control-label">{{ __('Gramasewa Divisions') }}</label>
-
-                                        <select name="gramasewaDivision" id="gramasewaDivision"
-                                                class="select2 form-control "
-                                                onchange="gramasewaDivisionChanged(this)"
-                                        >
-                                            <option value="">ALL</option>
-
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label for="village"
-                                               class="control-label">{{ __('Villages') }}</label>
-
-                                        <select name="village" id="village"
-                                                class="select2 form-control "
-                                        >
-                                            <option value="">ALL</option>
-
-                                        </select>
-                                    </div>
 
                                     <div class="form-group col-md-4">
                                         <label for="ethnicity"
@@ -176,7 +124,19 @@
                                             @endif
                                         </select>
                                     </div>
-                                    <div class="form-group col-md-6">
+                                    <div class="form-group col-md-4">
+                                        <label for="jobSector">Job Sector</label>
+                                        <select class="form-control select2" name="jobSector"
+                                                id="jobSector">
+                                            <option value="" selected>ALL
+                                            </option>
+                                            <option value="0">GOVERNMENT
+                                            </option>
+                                            <option value="1">PRIVATE
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
                                         <label for="career"
                                                class="control-label">{{ __('Career') }}</label>
 
@@ -196,7 +156,7 @@
                                         <label for="gender">Gender</label>
                                         <select class="form-control select2" name="gender"
                                                 id="gender">
-                                            <option value="" disabled selected>ALL
+                                            <option value=""  selected>ALL
                                             </option>
                                             <option value="1">MALE
                                             </option>
@@ -207,19 +167,8 @@
                                         </select>
                                     </div>
 
-                                    <div class="form-group col-md-3">
-                                        <label for="jobSector">Job Sector</label>
-                                        <select class="form-control select2" name="jobSector"
-                                                id="jobSector">
-                                            <option value="" disabled selected>ALL
-                                            </option>
-                                            <option value="0">GOVERNMENT
-                                            </option>
-                                            <option value="1">PRIVATE
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-4">
+
+                                    <div class="form-group col-md-5">
                                         <label>Birth day</label>
 
                                         <div class="input-daterange input-group" id="date-range">
@@ -231,6 +180,110 @@
                                         </div>
                                     </div>
 
+
+                                    <div class="form-group col-md-4">
+                                        <label for="male">Division Type</label><br/>
+                                        <input class="divisionTypeRadio noClear" data-id="memberDiv" type="radio" id="memberBtn" checked  name="divisionalType" value="1">
+                                        <label style="padding-right: 10px;" for="memberBtn">Election</label>
+                                        <input  class="divisionTypeRadio noClear" data-id="secretariatDiv" type="radio" id="secretariatBtn"  name="divisionalType" value="2">
+                                        <label style="padding-right: 10px;" for="secretariatBtn">Secretariat</label>
+                                        <input class="divisionTypeRadio noClear" data-id="councilDiv" type="radio" id="councilBtn"  name="divisionalType" value="3">
+                                        <label for="councilBtn">Council</label>
+                                    </div>
+
+                                    <div class="form-group col-md-4 divisionTypes memberDiv">
+                                        <label for="electionDivision"
+                                               class="control-label">{{ __('Election Division') }}</label>
+
+                                        <select name="electionDivision" id="electionDivision"
+                                                class="select2 form-control "
+                                                onchange="electionDivisionChanged(this)"
+                                        >
+                                            <option value="">ALL</option>
+
+                                            @if($electionDivisions != null)
+                                                @foreach($electionDivisions as $electionDivision)
+                                                    <option value="{{$electionDivision->idelection_division}}">{{strtoupper($electionDivision->name_en)}}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+
+
+                                    <div id="memberDiv" class="form-group col-md-4 divisionTypes memberDiv">
+                                        <label for="pollingBooth"
+                                               class="control-label">{{ __('Member Division') }}</label>
+
+                                        <select name="pollingBooth" id="pollingBooth"
+                                                class="select2 form-control "
+                                                onchange="pollingBoothChanged(this)"
+                                        >
+                                            <option value="">ALL</option>
+
+
+                                        </select>
+                                    </div>
+                                    <div style="display: none;" id="secretariatDiv" class="form-group col-md-4 divisionTypes secretariatDiv">
+                                        <label for="divisionalSecretariat"
+                                               class="control-label">{{ __('Divisional Secretariat') }}</label>
+
+                                        <select name="divisionalSecretariat" id="divisionalSecretariat"
+                                                class="select2 form-control "
+                                                onchange="divisionalSecretariatChanged(this)"
+                                        >
+                                            <option value="">ALL</option>
+
+                                            @if($secretariats != null)
+                                                @foreach($secretariats as $secretariat)
+                                                    <option value="{{$secretariat->iddivisional_secretariat}}">{{strtoupper($secretariat->name_en)}}</option>
+                                                @endforeach
+                                            @endif
+
+
+                                        </select>
+                                    </div>
+                                    <div style="display: none;" id="councilDiv" class="form-group col-md-4 divisionTypes councilDiv">
+                                        <label for="council"
+                                               class="control-label">{{ __('Council') }}</label>
+
+                                        <select name="council" id="council"
+                                                class="select2 form-control "
+                                                onchange="councilChanged(this)"
+                                        >
+                                            <option value="">ALL</option>
+
+                                            @if($councils != null)
+                                                @foreach($councils as $council)
+                                                    <option value="{{$council->idcouncil}}">{{strtoupper($council->name_en)}}</option>
+                                                @endforeach
+                                            @endif
+
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="gramasewaDivision"
+                                               class="control-label">{{ __('Gramasewa Divisions') }}</label>
+
+                                        <select name="gramasewaDivision" id="gramasewaDivision"
+                                                class="select2 form-control "
+                                                onchange="gramasewaDivisionChanged(this)"
+                                        >
+                                            <option value="">ALL</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="village"
+                                               class="control-label">{{ __('Villages') }}</label>
+
+                                        <select name="village" id="village"
+                                                class="select2 form-control "
+                                        >
+                                            <option value="">ALL</option>
+
+                                        </select>
+                                    </div>
+
                                     <div class="form-group col-md-2">
                                         <button type="submit"
                                                 class="btn form-control text-white btn-info waves-effect waves-light"
@@ -239,6 +292,7 @@
                                     </div>
                                 </div>
                             </form>
+
                         </div>
                     </div>
                     <div class="card m-b-20">
@@ -513,6 +567,43 @@
             });
         }
 
+        function divisionalSecretariatChanged(el) {
+            let booths = $(el).val();
+            $('#gramasewaDivision').html("<option value=''>ALL</option>");
+            $('#village').html("<option value=''>ALL</option>");
+
+            $.ajax({
+                url: '{{route('getGramasewaBySecretariat')}}',
+                type: 'POST',
+                data: {id: booths},
+                success: function (data) {
+                    let result = data.success;
+                    $.each(result, function (key, value) {
+                        $('#gramasewaDivision').append("<option value='" + value.idgramasewa_division + "'>" + value.name_en + "</option>");
+                    });
+                }
+            });
+        }
+
+
+        function councilChanged(el) {
+            let booths = $(el).val();
+            $('#gramasewaDivision').html("<option value=''>ALL</option>");
+            $('#village').html("<option value=''>ALL</option>");
+
+            $.ajax({
+                url: '{{route('getGramasewaByCouncil')}}',
+                type: 'POST',
+                data: {id: booths},
+                success: function (data) {
+                    let result = data.success;
+                    $.each(result, function (key, value) {
+                        $('#gramasewaDivision').append("<option value='" + value.idgramasewa_division + "'>" + value.name_en + "</option>");
+                    });
+                }
+            });
+        }
+
         function gramasewaDivisionChanged(el) {
             let division = el.value;
             $('#village').html("<option value=''>ALL</option>");
@@ -528,5 +619,11 @@
                 }
             });
         }
+
+        $('.divisionTypeRadio').on('click',function () {
+            $('#electionDivision').val('').trigger('change');
+            $('.divisionTypes').hide();
+            $('.'+$(this).attr('data-id')).show();
+        })
     </script>
 @endsection

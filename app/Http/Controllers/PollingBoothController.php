@@ -44,7 +44,7 @@ class PollingBoothController extends Controller
     {
         $id  = intval($request['id']);
         $result = PollingBooth::where('idelection_division',$id)->latest()->where('status',1)->get();
-        return response()->json(['success'  => $result]);
+        return response()->json(['success'  => $result,'secretariat']);
     }
 
     public function getByElectionDivisions(Request $request)
