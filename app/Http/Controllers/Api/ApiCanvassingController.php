@@ -141,6 +141,9 @@ class ApiCanvassingController extends Controller
         if($canvassing == null ){
             return response()->json(['error' => 'Canvassing not found', 'statusCode' => -99]);
         }
+        if(!($canvassing->status == 2 || $canvassing->status == 1)) {
+            return response()->json(['error' => 'This canvassing can not be started', 'statusCode' => -99]);
+        }
 
         if($canvassing->village()->where('agent',Auth::user()->idUser)->first() != null) {
             if ($canvassing->village()->where('agent', Auth::user()->idUser)->first()->status != 2) {
@@ -548,7 +551,6 @@ class ApiCanvassingController extends Controller
         return $votingConditions;
     }
 
-
     /*
      * Get house conditions in selected language
      */
@@ -631,15 +633,15 @@ class ApiCanvassingController extends Controller
             $canvassing->save();
         }
 
-        foreach ($canvassing->village as $village) {
-            $totalHouses = House::where('idoffice', Auth::user()->idoffice)->where('status', 1)->where('idvillage', $village->idvillage)->count();
-            $votersCount = VotersCount::where('idvillage',$village->idvillage)->where('idoffice',Auth::user()->idoffice)->first();
-            if($votersCount != null && ($votersCount->status == 2 || $votersCount->status == 1)){
-                $votersCount->status = 1;
-                $votersCount->houses = intval($totalHouses);
-                $votersCount->save();
-            }
-        }
+//        foreach ($canvassing->village as $village) {
+//            $totalHouses = House::where('idoffice', Auth::user()->idoffice)->where('status', 1)->where('idvillage', $village->idvillage)->count();
+//            $votersCount = VotersCount::where('idvillage',$village->idvillage)->where('idoffice',Auth::user()->idoffice)->first();
+//            if($votersCount != null && ($votersCount->status == 2 || $votersCount->status == 1)){
+//                $votersCount->status = 1;
+//                $votersCount->houses = intval($totalHouses);
+//                $votersCount->save();
+//            }
+//        }
         return response()->json(['success' => 'Canvassing Stopped' , 'statusCode' => 0]);
     }
 

@@ -51,8 +51,8 @@ class ScreenController extends Controller
             $villages = "";
             $houses = 0;
             foreach ($canvassing->village as $village){
-                $houses = $village->village->votes()->sum('houses');
                 $villages .= $village->village->name_en.'<br/>';
+                $houses +=  $village->village == null || $village->village->votes() == null ? 0 : $village->village->votes()->sum('houses');
             }
             $canvassing['villages'] = $villages;
             $canvassing['houses'] = $houses;

@@ -685,7 +685,7 @@
                 type: 'POST',
                 data: {id:id,type:type},
                 success: function (data) {
-                    console.log(data);
+
                     $.each(data, function (key, value) {
                         table += "<tr>";
                         table += "<td>"+value.member.belongs_user.fName+"</td>";

@@ -132,7 +132,7 @@ class GenericReportController extends Controller
                 $q->where('is_government', $request['jobSector']);
             });
         }
-        $users = $query->latest()->paginate($rows);
+        $users = $query->where('status','!=',3)->latest()->paginate($rows);
 
         $users->appends([
             'start' => $request['start'],
@@ -270,7 +270,7 @@ class GenericReportController extends Controller
                 $q->where('is_government', $request['jobSector']);
             });
         }
-        $users = $query->latest()->paginate($rows);
+        $users = $query->where('status','!=',3)->latest()->paginate($rows);
 
         $users->appends([
             'start' => $request['start'],
@@ -297,7 +297,9 @@ class GenericReportController extends Controller
     public function age()
     {
         $electionDivisions = ElectionDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
-        return view('generic_reports.age')->with(['electionDivisions' => $electionDivisions, 'title' => 'Report : Age']);
+        $secretariats = DivisionalSecretariat::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        $councils = Council::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        return view('generic_reports.age')->with(['electionDivisions' => $electionDivisions, 'title' => 'Report : Age','councils'=>$councils,'secretariats'=>$secretariats]);
     }
 
     public function ageChart(Request $request)
@@ -310,26 +312,41 @@ class GenericReportController extends Controller
         $memberMax = 0;
         $memberEqual = 0;
         $query = User::query();
-        if ($request['electionDivision'] != null) {
+
+        if ($request['village'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
+                $q->where('idvillage', $request['vilage']);
             });
-        }
-        if ($request['pollingBooth'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        }
-        if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
-        if ($request['village'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idvillage', $request['village']);
-            });
-        }
+
         $agents = $query->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 6)->where('status', 1)->get();
         if ($agents != null) {
             foreach ($agents as $agent) {
@@ -345,25 +362,38 @@ class GenericReportController extends Controller
         $agentCount = count($agents);
 
         $query1 = User::query();
-        if ($request['electionDivision'] != null) {
+        if ($request['village'] != null) {
             $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
+                $q->where('idvillage', $request['vilage']);
             });
-        }
-        if ($request['pollingBooth'] != null) {
-            $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        }
-        if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query1 = $query1->whereHas('member', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
-        }
-        if ($request['village'] != null) {
-            $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idvillage', $request['village']);
-            });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query1 = $query1->whereHas('member', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query1 = $query1->whereHas('member', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query1 = $query1->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query1 = $query1->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
 
         $members = $query1->where('iduser_role', 7)->whereHas('member', function ($q) {
@@ -392,58 +422,87 @@ class GenericReportController extends Controller
     public function education()
     {
         $electionDivisions = ElectionDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
-        return view('generic_reports.education')->with(['electionDivisions' => $electionDivisions, 'title' => 'Report : Education Qualifications']);
+        $secretariats = DivisionalSecretariat::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        $councils = Council::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        return view('generic_reports.education')->with(['electionDivisions' => $electionDivisions, 'title' => 'Report : Education Qualifications','secretariats'=>$secretariats,'councils'=>$councils]);
     }
 
     public function educationChart(Request $request)
     {
 
         $query = User::query();
-        if ($request['electionDivision'] != null) {
+        if ($request['village'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
+                $q->where('idvillage', $request['vilage']);
             });
-        }
-        if ($request['pollingBooth'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        }
-        if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
-        if ($request['village'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idvillage', $request['village']);
-            });
-        }
+
         $agents = $query->with(['agent.educationalQualification'])->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 6)->where('status', 1)->get();
 
         $agentsGroup = $agents->groupBy(['agent.ideducational_qualification']);
         $agentCount = count($agents);
 
         $query1 = User::query();
-        if ($request['electionDivision'] != null) {
+        if ($request['village'] != null) {
             $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
+                $q->where('idvillage', $request['vilage']);
             });
-        }
-        if ($request['pollingBooth'] != null) {
-            $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        }
-        if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query1 = $query1->whereHas('member', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
-        }
-        if ($request['village'] != null) {
-            $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idvillage', $request['village']);
-            });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query1 = $query1->whereHas('member', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query1 = $query1->whereHas('member', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query1 = $query1->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query1 = $query1->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
 
         $members = $query1->with(['member.educationalQualification'])->where('iduser_role', 7)->whereHas('member', function ($q) {
@@ -463,32 +522,47 @@ class GenericReportController extends Controller
     public function income()
     {
         $electionDivisions = ElectionDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
-        return view('generic_reports.income')->with(['electionDivisions' => $electionDivisions, 'title' => 'Report : Nature of Income']);
+        $secretariats = DivisionalSecretariat::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        $councils = Council::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        return view('generic_reports.income')->with(['electionDivisions' => $electionDivisions, 'title' => 'Report : Nature of Income','secretariats'=>$secretariats,'councils'=>$councils]);
     }
 
     public function incomeChart(Request $request)
     {
 
         $query = User::query();
-        if ($request['electionDivision'] != null) {
+        if ($request['village'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
+                $q->where('idvillage', $request['vilage']);
             });
-        }
-        if ($request['pollingBooth'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        }
-        if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
-        }
-        if ($request['village'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idvillage', $request['village']);
-            });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
         $agents = $query->with(['agent.natureOfIncome'])->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 6)->where('status', 1)->get();
 
@@ -496,25 +570,38 @@ class GenericReportController extends Controller
         $agentCount = count($agents);
 
         $query1 = User::query();
-        if ($request['electionDivision'] != null) {
+        if ($request['village'] != null) {
             $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
+                $q->where('idvillage', $request['vilage']);
             });
-        }
-        if ($request['pollingBooth'] != null) {
-            $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        }
-        if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query1 = $query1->whereHas('member', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
-        }
-        if ($request['village'] != null) {
-            $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idvillage', $request['village']);
-            });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query1 = $query1->whereHas('member', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query1 = $query1->whereHas('member', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query1 = $query1->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query1 = $query1->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
 
         $members = $query1->with(['member.natureOfIncome'])->where('iduser_role', 7)->whereHas('member', function ($q) {
@@ -534,58 +621,87 @@ class GenericReportController extends Controller
     public function career()
     {
         $electionDivisions = ElectionDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
-        return view('generic_reports.career')->with(['electionDivisions' => $electionDivisions, 'title' => 'Report : Career Type']);
+        $secretariats = DivisionalSecretariat::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        $councils = Council::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        return view('generic_reports.career')->with(['electionDivisions' => $electionDivisions, 'title' => 'Report : Career Type','secretariats'=>$secretariats,'councils'=>$councils]);
     }
 
     public function careerChart(Request $request)
     {
 
         $query = User::query();
-        if ($request['electionDivision'] != null) {
+        if ($request['village'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
+                $q->where('idvillage', $request['vilage']);
             });
-        }
-        if ($request['pollingBooth'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        }
-        if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
-        if ($request['village'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idvillage', $request['village']);
-            });
-        }
+
         $agents = $query->with(['agent.career'])->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 6)->where('status', 1)->get();
 
         $agentsGroup = $agents->groupBy(['agent.idcareer']);
         $agentCount = count($agents);
 
         $query1 = User::query();
-        if ($request['electionDivision'] != null) {
+        if ($request['village'] != null) {
             $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
+                $q->where('idvillage', $request['vilage']);
             });
-        }
-        if ($request['pollingBooth'] != null) {
-            $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        }
-        if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query1 = $query1->whereHas('member', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
-        }
-        if ($request['village'] != null) {
-            $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idvillage', $request['village']);
-            });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query1 = $query1->whereHas('member', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query1 = $query1->whereHas('member', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query1 = $query1->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query1 = $query1->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
 
         $members = $query1->with(['member.career'])->where('iduser_role', 7)->whereHas('member', function ($q) {
@@ -605,58 +721,87 @@ class GenericReportController extends Controller
     public function religion()
     {
         $electionDivisions = ElectionDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
-        return view('generic_reports.religion')->with(['electionDivisions' => $electionDivisions, 'title' => 'Report : Religion']);
+        $secretariats = DivisionalSecretariat::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        $councils = Council::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        return view('generic_reports.religion')->with(['electionDivisions' => $electionDivisions, 'title' => 'Report : Religion','secretariats'=>$secretariats,'councils'=>$councils]);
     }
 
     public function religionChart(Request $request)
     {
 
         $query = User::query();
-        if ($request['electionDivision'] != null) {
+        if ($request['village'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
+                $q->where('idvillage', $request['vilage']);
             });
-        }
-        if ($request['pollingBooth'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        }
-        if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
-        if ($request['village'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idvillage', $request['village']);
-            });
-        }
+
         $agents = $query->with(['agent.religion'])->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 6)->where('status', 1)->get();
 
         $agentsGroup = $agents->groupBy(['agent.idreligion']);
         $agentCount = count($agents);
 
         $query1 = User::query();
-        if ($request['electionDivision'] != null) {
+        if ($request['village'] != null) {
             $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
+                $q->where('idvillage', $request['vilage']);
             });
-        }
-        if ($request['pollingBooth'] != null) {
-            $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        }
-        if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query1 = $query1->whereHas('member', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
-        }
-        if ($request['village'] != null) {
-            $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idvillage', $request['village']);
-            });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query1 = $query1->whereHas('member', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query1 = $query1->whereHas('member', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query1 = $query1->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query1 = $query1->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
 
         $members = $query1->with(['member.religion'])->where('iduser_role', 7)->whereHas('member', function ($q) {
@@ -676,32 +821,47 @@ class GenericReportController extends Controller
     public function ethnicity()
     {
         $electionDivisions = ElectionDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
-        return view('generic_reports.ethnicity')->with(['electionDivisions' => $electionDivisions, 'title' => 'Report : Ethnicity']);
+        $secretariats = DivisionalSecretariat::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        $councils = Council::where('iddistrict', Auth::user()->office->iddistrict)->where('status', 1)->get();
+        return view('generic_reports.ethnicity')->with(['electionDivisions' => $electionDivisions, 'title' => 'Report : Ethnicity','secretariats'=>$secretariats,'councils'=>$councils]);
     }
 
     public function ethnicityChart(Request $request)
     {
 
         $query = User::query();
-        if ($request['electionDivision'] != null) {
+        if ($request['village'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
+                $q->where('idvillage', $request['vilage']);
             });
-        }
-        if ($request['pollingBooth'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        }
-        if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
-        }
-        if ($request['village'] != null) {
-            $query = $query->whereHas('agent', function ($q) use ($request) {
-                $q->where('idvillage', $request['village']);
-            });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query = $query->whereHas('agent', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query = $query->whereHas('agent', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
         $agents = $query->with(['agent.ethnicity'])->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 6)->where('status', 1)->get();
 
@@ -709,25 +869,38 @@ class GenericReportController extends Controller
         $agentCount = count($agents);
 
         $query1 = User::query();
-        if ($request['electionDivision'] != null) {
+        if ($request['village'] != null) {
             $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idelection_division', $request['electionDivision']);
+                $q->where('idvillage', $request['vilage']);
             });
-        }
-        if ($request['pollingBooth'] != null) {
-            $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idpolling_booth', $request['pollingBooth']);
-            });
-        }
-        if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query1 = $query1->whereHas('member', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
-        }
-        if ($request['village'] != null) {
-            $query1 = $query1->whereHas('member', function ($q) use ($request) {
-                $q->where('idvillage', $request['village']);
-            });
+        } else if ($request['divisionalType'] == 1) {
+            if ($request['pollingBooth'] != null) {
+                $query1 = $query1->whereHas('member', function ($q) use ($request) {
+                    $q->where('idpolling_booth', $request['pollingBooth']);
+                });
+            } else if ($request['electionDivision'] != null) {
+                $query1 = $query1->whereHas('member', function ($q) use ($request) {
+                    $q->where('idelection_division', $request['electionDivision']);
+                });
+            }
+        } else if ($request['divisionalType'] == 2) {
+            if ($request['divisionalSecretariat'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('iddivisional_secretariat', $request['divisionalSecretariat'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query1 = $query1->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
+        } else if ($request['divisionalType'] == 3) {
+            if ($request['council'] != null) {
+                $gramasewaDivisions = GramasewaDivision::where('iddistrict', Auth::user()->office->iddistrict)->where('idcouncil', $request['council'])->where('status', 1)->select('idgramasewa_division')->get()->toArray();
+                $query1 = $query1->whereHas('member', function ($q) use ($gramasewaDivisions) {
+                    $q->whereIn('idgramasewa_division', $gramasewaDivisions);
+                });
+            }
         }
 
         $members = $query1->with(['member.ethnicity'])->where('iduser_role', 7)->whereHas('member', function ($q) {

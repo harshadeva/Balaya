@@ -42,12 +42,24 @@
 
 
                             <div class="form-group col-md-4">
+                                <label for="male">Division Type</label><br/>
+                                <input  class="divisionTypeRadio noClear" data-id="memberDiv" type="radio" id="memberBtn" checked  name="divisionalType" value="1">
+                                <label style="padding-right: 10px;" for="memberBtn">Election</label>
+                                <input  class="divisionTypeRadio noClear" data-id="secretariatDiv" type="radio" id="secretariatBtn"  name="divisionalType" value="2">
+                                <label style="padding-right: 10px;" for="secretariatBtn">Secretariat</label>
+                                <input class="divisionTypeRadio noClear" data-id="councilDiv" type="radio" id="councilBtn"  name="divisionalType" value="3">
+                                <label for="councilBtn">Council</label>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="form-group col-md-4 divisionTypes memberDiv">
                                 <label for="electionDivision"
                                        class="control-label">{{ __('Election Division') }}</label>
 
                                 <select name="electionDivision" id="electionDivision"
                                         class="select2 form-control "
-                                        onchange="electionDivisionChanged(this);$('#form1').submit()"
+                                        onchange="electionDivisionChanged(this)"
                                 >
                                     <option value="">ALL</option>
 
@@ -58,20 +70,59 @@
                                     @endif
                                 </select>
                             </div>
-                            <div class="form-group col-md-5">
+
+
+                            <div id="memberDiv" class="form-group col-md-4 divisionTypes memberDiv">
                                 <label for="pollingBooth"
                                        class="control-label">{{ __('Member Division') }}</label>
 
                                 <select name="pollingBooth" id="pollingBooth"
                                         class="select2 form-control "
-                                        onchange="pollingBoothChanged(this);$('#form1').submit()"
+                                        onchange="pollingBoothChanged(this)"
                                 >
                                     <option value="">ALL</option>
 
 
                                 </select>
                             </div>
-                            <div class="form-group col-md-5">
+                            <div style="display: none;" id="secretariatDiv" class="form-group col-md-4 divisionTypes secretariatDiv">
+                                <label for="divisionalSecretariat"
+                                       class="control-label">{{ __('Divisional Secretariat') }}</label>
+
+                                <select name="divisionalSecretariat" id="divisionalSecretariat"
+                                        class="select2 form-control "
+                                        onchange="divisionalSecretariatChanged(this)"
+                                >
+                                    <option value="">ALL</option>
+
+                                    @if($secretariats != null)
+                                        @foreach($secretariats as $secretariat)
+                                            <option value="{{$secretariat->iddivisional_secretariat}}">{{strtoupper($secretariat->name_en)}}</option>
+                                        @endforeach
+                                    @endif
+
+
+                                </select>
+                            </div>
+                            <div style="display: none;" id="councilDiv" class="form-group col-md-4 divisionTypes councilDiv">
+                                <label for="council"
+                                       class="control-label">{{ __('Council') }}</label>
+
+                                <select name="council" id="council"
+                                        class="select2 form-control "
+                                        onchange="councilChanged(this)"
+                                >
+                                    <option value="">ALL</option>
+
+                                    @if($councils != null)
+                                        @foreach($councils as $council)
+                                            <option value="{{$council->idcouncil}}">{{strtoupper($council->name_en)}}</option>
+                                        @endforeach
+                                    @endif
+
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
                                 <label for="gramasewaDivision"
                                        class="control-label">{{ __('Gramasewa Divisions') }}</label>
 
@@ -83,7 +134,7 @@
 
                                 </select>
                             </div>
-                            <div class="form-group col-md-5">
+                            <div class="form-group col-md-4">
                                 <label for="village"
                                        class="control-label">{{ __('Villages') }}</label>
 
@@ -176,7 +227,6 @@
                         }
                         if (data.success != null) {
 
-                            console.log(data.success);
                             $('#agent-chart').html('');
                             $('#member-chart').html('');
                             $('#agentsCount').html(' ('+data.success.agent_count+')');
@@ -272,6 +322,7 @@
                     $.each(result, function (key, value) {
                         $('#pollingBooth').append("<option value='" + value.idpolling_booth + "'>" + value.name_en + "</option>");
                     });
+                    $('#form1').submit();
                 }
             });
         }
@@ -290,6 +341,7 @@
                     $.each(result, function (key, value) {
                         $('#gramasewaDivision').append("<option value='" + value.idgramasewa_division + "'>" + value.name_en + "</option>");
                     });
+                    $('#form1').submit();
                 }
             });
         }
@@ -306,8 +358,57 @@
                     $.each(result, function (key, value) {
                         $('#village').append("<option value='" + value.idvillage + "'>" + value.name_en + "</option>");
                     });
+                    $('#form1').submit();
                 }
             });
         }
+
+        function divisionalSecretariatChanged(el) {
+            let booths = $(el).val();
+            $('#gramasewaDivision').html("<option value=''>ALL</option>");
+            $('#village').html("<option value=''>ALL</option>");
+
+            $.ajax({
+                url: '{{route('getGramasewaBySecretariat')}}',
+                type: 'POST',
+                data: {id: booths},
+                success: function (data) {
+                    let result = data.success;
+                    $.each(result, function (key, value) {
+                        $('#gramasewaDivision').append("<option value='" + value.idgramasewa_division + "'>" + value.name_en + "</option>");
+                    });
+                    $('#form1').submit();
+                }
+            });
+        }
+
+
+        function councilChanged(el) {
+            let booths = $(el).val();
+            $('#gramasewaDivision').html("<option value=''>ALL</option>");
+            $('#village').html("<option value=''>ALL</option>");
+
+            $.ajax({
+                url: '{{route('getGramasewaByCouncil')}}',
+                type: 'POST',
+                data: {id: booths},
+                success: function (data) {
+                    let result = data.success;
+                    $.each(result, function (key, value) {
+                        $('#gramasewaDivision').append("<option value='" + value.idgramasewa_division + "'>" + value.name_en + "</option>");
+                    });
+                    $('#form1').submit();
+                }
+            });
+        }
+
+        $('.divisionTypeRadio').on('click',function () {
+            $('#electionDivision').val('').trigger('change');
+            $('#secretariat').val('').trigger('change');
+            $('#council').val('').trigger('change');
+            $('.divisionTypes').hide();
+            $('.'+$(this).attr('data-id')).show();
+            $('#form1').submit();
+        })
     </script>
 @endsection

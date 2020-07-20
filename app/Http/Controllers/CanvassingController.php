@@ -298,7 +298,7 @@ class CanvassingController extends Controller
 
     public function reject(Request $request){
         $canvassing = Canvassing::where('idcanvassing', $request['id'])->where('idoffice', Auth::user()->idoffice)->first();
-        if($canvassing->status == 4){
+        if($canvassing->status == 4 || $canvassing->status == 2){
             $canvassing->status = 0;
             $canvassing->save();
             return response()->json(['success' => 'success']);
@@ -362,7 +362,14 @@ class CanvassingController extends Controller
 
             $query = $query->whereBetween('date', [$startDate, $endDate]);
         }
-        $canvassing = $query->where('idoffice',Auth::user()->idoffice)->where('status',4)->paginate(20);
+        if(Auth::user()->iduser_role == 5){
+            $canvassing = $query->where('idUser',Auth::user()->idUser)->where('status',4)->paginate(20);
+
+        }
+        else{
+            $canvassing = $query->where('idoffice',Auth::user()->idoffice)->where('status',4)->paginate(20);
+
+        }
         $canvassingTypes = CanvassingType::where('status',1)->latest()->get();
         return view('canvassing.unapproved', ['title' =>  __('Unapproved Canvassing'),'canvassings'=>$canvassing,'canvassingTypes'=>$canvassingTypes]);
     }
@@ -402,7 +409,14 @@ class CanvassingController extends Controller
 
             $query = $query->whereBetween('date', [$startDate, $endDate]);
         }
-        $canvassing = $query->where('idoffice',Auth::user()->idoffice)->where('status',2)->paginate(20);
+        if(Auth::user()->iduser_role == 5){
+            $canvassing = $query->where('idUser',Auth::user()->idUser)->where('status',2)->paginate(20);
+
+        }
+        else{
+            $canvassing = $query->where('idoffice',Auth::user()->idoffice)->where('status',2)->paginate(20);
+
+        }
         $canvassingTypes = CanvassingType::where('status',1)->latest()->get();
         return view('canvassing.pending', ['title' =>  __('Pending Canvassing'),'canvassings'=>$canvassing,'canvassingTypes'=>$canvassingTypes]);
     }
@@ -426,7 +440,14 @@ class CanvassingController extends Controller
 
             $query = $query->whereBetween('date', [$startDate, $endDate]);
         }
-        $canvassing = $query->where('idoffice',Auth::user()->idoffice)->where('status',0)->paginate(20);
+        if(Auth::user()->iduser_role == 5){
+            $canvassing = $query->where('idUser',Auth::user()->idUser)->where('status',0)->paginate(20);
+
+        }
+        else{
+            $canvassing = $query->where('idoffice',Auth::user()->idoffice)->where('status',0)->paginate(20);
+
+        }
         $canvassingTypes = CanvassingType::where('status',1)->latest()->get();
         return view('canvassing.rejected', ['title' =>  __('Rejected Canvassing'),'canvassings'=>$canvassing,'canvassingTypes'=>$canvassingTypes]);
     }

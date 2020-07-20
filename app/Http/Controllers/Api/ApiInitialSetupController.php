@@ -25,9 +25,9 @@ class ApiInitialSetupController extends Controller
             return response()->json(['error' => $validator->errors()->first(), 'statusCode' => -99]);
         }
 
-        $isConfirmed = VotersCount::where('idoffice',Auth::user()->idoffice)->where('idvillage',Auth::user()->agent->idvillage)->where('status',1)->first();
+//        $isConfirmed = VotersCount::where('idoffice',Auth::user()->idoffice)->where('idvillage',Auth::user()->agent->idvillage)->where('status',1)->first();
 
-        if($isConfirmed == null) {
+//        if($isConfirmed == null) {
             $voters = VotersCount::where('idoffice', Auth::user()->idoffice)->where('idvillage', Auth::user()->agent->idvillage)->where('status', 2)->first();
             if ($voters != null) {
                 $voters->idUser = Auth::user()->idUser;
@@ -49,10 +49,10 @@ class ApiInitialSetupController extends Controller
             }
             return response()->json(['success' => 'Location saved', 'statusCode' => 0]);
 
-        }else{
-            return response()->json(['error' => 'Village details cannot be edited after first canvassing end.', 'statusCode' => -99]);
-
-        }
+//        }else{
+//            return response()->json(['error' => 'Village details cannot be edited after first canvassing end.', 'statusCode' => -99]);
+//
+//        }
 
 
     }
@@ -62,9 +62,9 @@ class ApiInitialSetupController extends Controller
         if (Auth::user()->iduser_role != 6) {
             return response()->json(['error' => 'You are not an agent', 'statusCode' => -99]);
         }
-        $isConfirmed = VotersCount::where('idoffice',Auth::user()->idoffice)->where('idvillage',Auth::user()->agent->idvillage)->where('status',1)->first();//check is first canvassing is started or not
+//        $isConfirmed = VotersCount::where('idoffice',Auth::user()->idoffice)->where('idvillage',Auth::user()->agent->idvillage)->where('status',1)->first();//check is first canvassing is started or not
 
-        if($isConfirmed == null) {
+//        if($isConfirmed == null) {
             $voters = VotersCount::where('idoffice', Auth::user()->idoffice)->where('idvillage', Auth::user()->agent->idvillage)->where('status', 2)->first();
             if ($voters != null) {
                 $voters->total = round($request['total']);
@@ -87,11 +87,11 @@ class ApiInitialSetupController extends Controller
             app(TaskController::class)->calAgentBudget(Auth::user(), round($request['total']));
 
             return response()->json(['success' => 'Value saved', 'statusCode' => 0]);
-        }
-        else{
-            return response()->json(['error' => 'Village details cannot be edited after first canvassing end.', 'statusCode' => -99]);
-
-        }
+//        }
+//        else{
+//            return response()->json(['error' => 'Village details cannot be edited after first canvassing end.', 'statusCode' => -99]);
+//
+//        }
 
     }
 }

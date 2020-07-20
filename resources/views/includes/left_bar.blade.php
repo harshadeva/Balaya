@@ -1,7 +1,8 @@
 <!-- Loader -->
-<div id="preSecretariat">  <div id="status">
-<div class="spinner"></div>
-</div>
+<div id="preSecretariat">
+    <div id="status">
+        <div class="spinner"></div>
+    </div>
 </div>
 
 
@@ -51,7 +52,8 @@
                                     <span class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                             <ul class="list-unstyled">
                                 @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3 || \Illuminate\Support\Facades\Auth::user()->iduser_role == 5)
-                                <li><a href="{{route('divisionalSecretariat')}}">{{ __('Create Secretariat') }}</a></li>
+                                    <li><a href="{{route('divisionalSecretariat')}}">{{ __('Create Secretariat') }}</a>
+                                    </li>
                                 @endif
                                 <li><a href="{{route('divisionalSecretariat-view')}}">{{ __('View Secretariats') }}</a>
                                 </li>
@@ -64,7 +66,7 @@
                                             class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                             <ul class="list-unstyled">
                                 @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3 || \Illuminate\Support\Facades\Auth::user()->iduser_role == 5)
-                                <li><a href="{{route('council')}}">{{ __('Create Council') }}</a></li>
+                                    <li><a href="{{route('council')}}">{{ __('Create Council') }}</a></li>
                                 @endif
                                 <li><a href="{{route('council-view')}}">{{ __('View Councils') }}</a></li>
                             </ul>
@@ -72,7 +74,7 @@
                     @endif
 
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 9 && \Illuminate\Support\Facades\Auth::user()->office->ANALYSIS() == 1)
-                    <li class="menu-title">{{ __('ANALYSIS') }}</li>
+                        <li class="menu-title">{{ __('ANALYSIS') }}</li>
                     @endif
 
 
@@ -102,16 +104,16 @@
                                 @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 8 ||  \Illuminate\Support\Facades\Auth::user()->iduser_role == 3 ||  \Illuminate\Support\Facades\Auth::user()->iduser_role == 4||  \Illuminate\Support\Facades\Auth::user()->iduser_role == 10)
                                     <li><a href="{{route('viewPost')}}">{{ __('View Posts') }}</a></li>
 
-                                @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 8 )
-                                    <li><a href="{{route('createPost')}}">{{ __('Create Post') }}</a></li>
+                                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 8 )
+                                        <li><a href="{{route('createPost')}}">{{ __('Create Post') }}</a></li>
 
-                                @endif
-                                @endif
-                                 @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 9 )
-                                <li><a href="{{route('pendingPosts')}}">{{ __('Pending Posts') }}</a></li>
-                                <li><a href="{{route('activePosts')}}">{{ __('Active Posts') }}</a></li>
-                                <li><a href="{{route('rejectedPosts')}}">{{ __('Rejected Posts') }}</a></li>
                                     @endif
+                                @endif
+                                @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 9 )
+                                    <li><a href="{{route('pendingPosts')}}">{{ __('Pending Posts') }}</a></li>
+                                    <li><a href="{{route('activePosts')}}">{{ __('Active Posts') }}</a></li>
+                                    <li><a href="{{route('rejectedPosts')}}">{{ __('Rejected Posts') }}</a></li>
+                                @endif
 
                             </ul>
                         </li>
@@ -121,23 +123,23 @@
                     || \Illuminate\Support\Facades\Auth::user()->iduser_role == 4
                     || \Illuminate\Support\Facades\Auth::user()->iduser_role == 10
                     ) && \Illuminate\Support\Facades\Auth::user()->office->MAP() == 1)
-                    <li class="has_sub">
-                        <a href="javascript:void(0);" class="waves-effect">
-                            <i class="dripicons-suitcase"></i>
-                            <span>{{ __('Map') }}
-                                <span class="pull-right">
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect">
+                                <i class="dripicons-suitcase"></i>
+                                <span>{{ __('Map') }}
+                                    <span class="pull-right">
                                    <i class="mdi mdi-chevron-right"></i>
                                </span>
                            </span>
-                        </a>
-                        <ul class="list-unstyled">
-                            {{--<li><a href="{{route('routeTest')}}">{{ __('Route Test') }}</a></li>--}}
-                            <li><a href="{{route('agentDistribution')}}">{{ __('Agent Distribution') }}</a></li>
-                            <li><a href="{{route('heatMap')}}">{{ __('Heat Map') }}</a></li>
-                            <li><a href="{{route('liveMap')}}">{{ __('Live Map') }}</a></li>
+                            </a>
+                            <ul class="list-unstyled">
+                                {{--<li><a href="{{route('routeTest')}}">{{ __('Route Test') }}</a></li>--}}
+                                <li><a href="{{route('agentDistribution')}}">{{ __('Agent Distribution') }}</a></li>
+                                <li><a href="{{route('heatMap')}}">{{ __('Heat Map') }}</a></li>
+                                <li><a href="{{route('liveMap')}}">{{ __('Live Map') }}</a></li>
 
-                        </ul>
-                    </li>
+                            </ul>
+                        </li>
                     @endif
 
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 9 )
@@ -155,13 +157,13 @@
 
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
                         {{--<li class="has_sub">--}}
-                            {{--<a href="javascript:void(0);" class="waves-effect"><i--}}
-                                        {{--class="dripicons-suitcase"></i><span>{{ __('Responses') }}--}}
-                                    {{--<span--}}
-                                            {{--class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>--}}
-                            {{--<ul class="list-unstyled">--}}
-                                {{--<li><a href="{{route('pendingResponses')}}">{{ __('Pending Responses') }}</a></li>--}}
-                            {{--</ul>--}}
+                        {{--<a href="javascript:void(0);" class="waves-effect"><i--}}
+                        {{--class="dripicons-suitcase"></i><span>{{ __('Responses') }}--}}
+                        {{--<span--}}
+                        {{--class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>--}}
+                        {{--<ul class="list-unstyled">--}}
+                        {{--<li><a href="{{route('pendingResponses')}}">{{ __('Pending Responses') }}</a></li>--}}
+                        {{--</ul>--}}
                         {{--</li>--}}
                     @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
@@ -192,18 +194,26 @@
                                             class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                             <ul class="list-unstyled">
                                 @if( \Illuminate\Support\Facades\Auth::user()->iduser_role == 5)
-                                <li><a href="{{route('createCanvassing')}}">{{ __('Create Canvassing') }}</a></li>
-                                {{--<li><a href="{{route('canvassingType')}}">{{ __('Canvassing Type') }}</a></li>--}}
+                                    <li><a href="{{route('createCanvassing')}}">{{ __('Create Canvassing') }}</a></li>
+                                    {{--<li><a href="{{route('canvassingType')}}">{{ __('Canvassing Type') }}</a></li>--}}
                                 @endif
-                                    @if( \Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
-                                        <li><a href="{{route('upApprovedCanvassing')}}">{{ __('Unapproved Canvassing') }}</a></li>
-                                        <li><a href="{{route('pendingCanvassing')}}">{{ __('Pending Canvassing') }}</a></li>
-                                        <li><a href="{{route('rejectedCanvassing')}}">{{ __('Rejected Canvassing') }}</a></li>
-                                        <li><a href="{{route('finishedCanvassing')}}">{{ __('Finished Canvassing') }}</a></li>
+                                @if( \Illuminate\Support\Facades\Auth::user()->iduser_role == 3 || \Illuminate\Support\Facades\Auth::user()->iduser_role == 5)
+                                    <li>
+                                        <a href="{{route('upApprovedCanvassing')}}">{{ __('Unapproved Canvassing') }}</a>
+                                    </li>
+                                    <li><a href="{{route('pendingCanvassing')}}">{{ __('Pending Canvassing') }}</a></li>
+                                    <li><a href="{{route('rejectedCanvassing')}}">{{ __('Rejected Canvassing') }}</a>
+                                    </li>
+                                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
+                                        <li>
+                                            <a href="{{route('finishedCanvassing')}}">{{ __('Finished Canvassing') }}</a>
+                                        </li>
                                     @endif
-                                    @if( \Illuminate\Support\Facades\Auth::user()->iduser_role == 3 || \Illuminate\Support\Facades\Auth::user()->iduser_role == 4)
-                                        <li><a href="{{route('pendingCanvassingScreen')}}">{{ __('Canvassing Screen') }}</a></li>
-                                    @endif
+                                @endif
+                                @if( \Illuminate\Support\Facades\Auth::user()->iduser_role == 3 || \Illuminate\Support\Facades\Auth::user()->iduser_role == 4)
+                                    <li><a href="{{route('pendingCanvassingScreen')}}">{{ __('Canvassing Screen') }}</a>
+                                    </li>
+                                @endif
                             </ul>
                         </li>
                     @endif
@@ -234,18 +244,18 @@
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3  && \Illuminate\Support\Facades\Auth::user()->office->attendence_available == 1)
 
                         {{--<li class="has_sub">--}}
-                            {{--<a href="javascript:void(0);" class="waves-effect">--}}
-                                {{--<i class="dripicons-suitcase"></i>--}}
-                                {{--<span>{{ __('Event') }}--}}
-                                    {{--<span class="pull-right">--}}
-                                       {{--<i class="mdi mdi-chevron-right"></i>--}}
-                                   {{--</span>--}}
-                               {{--</span>--}}
-                            {{--</a>--}}
-                            {{--<ul class="list-unstyled">--}}
-                                {{--<li><a href="{{route('create-event')}}">{{ __('Create Event') }}</a></li>--}}
-                                {{--<li><a href="{{route('view-events')}}">{{ __('View Events') }}</a></li>--}}
-                            {{--</ul>--}}
+                        {{--<a href="javascript:void(0);" class="waves-effect">--}}
+                        {{--<i class="dripicons-suitcase"></i>--}}
+                        {{--<span>{{ __('Event') }}--}}
+                        {{--<span class="pull-right">--}}
+                        {{--<i class="mdi mdi-chevron-right"></i>--}}
+                        {{--</span>--}}
+                        {{--</span>--}}
+                        {{--</a>--}}
+                        {{--<ul class="list-unstyled">--}}
+                        {{--<li><a href="{{route('create-event')}}">{{ __('Create Event') }}</a></li>--}}
+                        {{--<li><a href="{{route('view-events')}}">{{ __('View Events') }}</a></li>--}}
+                        {{--</ul>--}}
                         {{--</li>--}}
                     @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3 ||\Illuminate\Support\Facades\Auth::user()->iduser_role == 4 || \Illuminate\Support\Facades\Auth::user()->iduser_role == 10)
@@ -272,7 +282,8 @@
                                 <li><a href="{{route('report-religion')}}">{{ __('Religion Report') }}</a></li>
                                 <li><a href="{{route('report-ethnicity')}}">{{ __('Ethnicity Report') }}</a></li>
                                 <li><a href="{{route('report-voters')}}">{{ __('Voters Report') }}</a></li>
-                                <li><a href="{{route('report-post-response')}}">{{ __('Post Response Summery') }}</a></li>
+                                <li><a href="{{route('report-post-response')}}">{{ __('Post Response Summery') }}</a>
+                                </li>
                                 {{--<li><a href="{{route('report-community-response')}}">{{ __('Community Response Summery') }}</a></li>--}}
                             </ul>
                         </li>
@@ -307,7 +318,8 @@
                             </a>
                             <ul class="list-unstyled">
                                 <li><a href="{{route('report-votersCount')}}">{{ __('Voters Count') }}</a></li>
-                                <li><a href="{{route('report-compareCanvassing')}}">{{ __('Compare Canvassing') }}</a></li>
+                                <li><a href="{{route('report-compareCanvassing')}}">{{ __('Compare Canvassing') }}</a>
+                                </li>
                             </ul>
                         </li>
                     @endif
@@ -366,25 +378,25 @@
                             <ul class="list-unstyled">
                                 @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 9 )
 
-                                <li><a href="{{route('welcomeMessage')}}">{{ __('Welcome SMS') }}</a></li>
+                                    <li><a href="{{route('welcomeMessage')}}">{{ __('Welcome SMS') }}</a></li>
                                 @endif
 
-                            @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 8 )
+                                @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 8 )
 
                                     <li><a href="{{route('createSms')}}">{{ __('Send SMS') }}</a></li>
                                     <li><a href="{{route('sendGroup')}}">{{ __('Send Group SMS') }}</a></li>
 
                                 @endif
-                                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 5 )
+                                @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 5 )
                                     <li><a href="{{route('createSmsGroup')}}">{{ __('Create Group') }}</a></li>
                                     <li><a href="{{route('addContacts')}}">{{ __('Add Contacts') }}</a></li>
-                                    @endif
+                                @endif
 
-                                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 9 )
-                                        <li><a href="{{route('pendingSms')}}">{{ __('Pending SMS') }}</a></li>
-                                        <li><a href="{{route('sentSms')}}">{{ __('Sent SMS') }}</a></li>
-                                        <li><a href="{{route('rejectedSms')}}">{{ __('Rejected SMS') }}</a></li>
-                                    @endif
+                                @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 9 )
+                                    <li><a href="{{route('pendingSms')}}">{{ __('Pending SMS') }}</a></li>
+                                    <li><a href="{{route('sentSms')}}">{{ __('Sent SMS') }}</a></li>
+                                    <li><a href="{{route('rejectedSms')}}">{{ __('Rejected SMS') }}</a></li>
+                                @endif
                                 @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 2 )
                                     <li><a href="{{route('smsConfiguration')}}">{{ __('SMS Configurations') }}</a></li>
                                 @endif

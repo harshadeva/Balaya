@@ -130,7 +130,7 @@ class UserController extends Controller
             }
         }
         else  if($request['userRole'] == 9){
-            $exist = User::where('idoffice',$office)->where('iduser_role',9)->first();
+            $exist = User::where('idoffice',$office)->where('iduser_role',9)->where('status','!=',3)->first();
             if($exist != null){
                 return response()->json(['errors' => ['error'=>'Media head has been already created!']]);
             }
@@ -143,20 +143,17 @@ class UserController extends Controller
         }
 
         //check is nic already taken by active user
-        if($request['userRole'] == 7){
-            $idExist = User::where('nic',$request['nic'])->where(function ($q)  use ($office){
-                $q->whereHas('member',function ($q) use ($office){
-                    $q->whereHas('memberAgents',function ($q) use ($office){
-                        $q->where('idoffice',$office)->whereIn('status', [1, 2]);
-                    });
+        $memberExist = User::where('nic',$request['nic'])->where('iduser_role',7)->where(function ($q)  use ($office){
+            $q->whereHas('member',function ($q) use ($office){
+                $q->whereHas('memberAgents',function ($q) use ($office){
+                    $q->where('idoffice',$office)->where('status','!=',3);
                 });
-            })->exists();
-        }
-        else {
-            $idExist = User::where('nic', $request['nic'])->whereIn('status', [1, 2])->exists();
-        }
-        if($idExist == 1){
-            return response()->json(['errors' => ['error'=>'Another active user already exist with same NIC!']]);
+            });
+        })->exists();
+
+        $userExist = User::where('nic', $request['nic'])->where('iduser_role','!=',7)->where('status','!=',3)->exists();
+        if($userExist == 1 || $memberExist == 1){
+            return response()->json(['errors' => ['error'=>'Another user already exist with same NIC!']]);
         }
         //check is nic already taken by active user  end
 
@@ -260,9 +257,9 @@ class UserController extends Controller
         }
         else{
             $users = $query->where('idoffice', intval(Auth::user()->idoffice))->where(function ($q){
-                $q->whereIn('iduser_role',[3,4,5,6,8,9,10])->orWhereHas('member', function ($q)  {
+                $q->whereIn('iduser_role',[3,4,5,6,8,9,10])->where('status','!=',3)->orWhereHas('member', function ($q)  {
                     $q->whereHas('memberAgents', function ($q)  {
-                        $q->where('idoffice', Auth::user()->idoffice);
+                        $q->where('idoffice', Auth::user()->idoffice)->where('status','!=',3);
                     });
                 });
             })->latest()->paginate(20);//member get with memberAgent table.bot directly form usermaster table
@@ -614,11 +611,22 @@ class UserController extends Controller
                 }
 
             }
-            else {
-                if ($user->status == 1) {
-                    $user->status = 0;
-                    $user->save();
+            else if($user->iduser_role == 6){
+                $agent = Agent::where('idUser',$user->idUser)->first();
+                if($agent != null) {
+                    if ($agent->status == 1) {
+                        $agent->status = 0;
+                        $agent->save();
+                    }
                 }
+                else{
+                    return response()->json(['errors' => ['error'=>'User invalid!']]);
+                }
+            }
+
+            if ($user->status == 1 && $user->iduser_role != 7) { // member only disabled  from auth user office.Can not change user statuss.only member agent table status change
+                $user->status = 0;
+                $user->save();
             }
         }
         else{
@@ -630,31 +638,31 @@ class UserController extends Controller
 
     public function enable(Request $request){
         $user = User::find(intval($request['id']));
-        if($user->iduser_role == 7){
-            $idExist = User::where('nic',$user->nic)->where('idUser','!=',$user->idUser)->where(function ($q){
-                $q->whereHas('member',function ($q){
-                    $q->whereHas('memberAgents',function ($q){
-                        $q->where('idoffice',Auth::user()->idoffice)->whereIn('status', [1, 2]);
-                    });
-                });
-            })->exists();
-        }
-        else if($user->iduser_role == 6){
-            $exist = Agent::where('idvillage',$request['village'])->whereHas('userBelongs',function ($q) {
-                $q->where('idoffice',Auth::user()->idoffice)->whereIn('status',[1,2,3]);
-            })->whereIn('status',[1,2,3])->first();
-            if($exist != null){
-                return response()->json(['error' => 'Agent has already assigned for this village!', 'statusCode' => -99]);
-            }
-
-            $idExist = User::where('nic', $user->nic)->where('idUser', '!=', $user->idUser)->whereIn('status', [1, 2])->exists();
-        }
-        else{
-            $idExist = User::where('nic', $user->nic)->where('idUser', '!=', $user->idUser)->whereIn('status', [1, 2])->exists();
-        }
-        if($idExist == 1){
-            return response()->json(['errors' => ['error'=>'Another active user already exist with same NIC!']]);
-        }
+//        if($user->iduser_role == 7){
+//            $idExist = User::where('nic',$user->nic)->where('idUser','!=',$user->idUser)->where(function ($q){
+//                $q->whereHas('member',function ($q){
+//                    $q->whereHas('memberAgents',function ($q){
+//                        $q->where('idoffice',Auth::user()->idoffice)->whereIn('status', [1, 2]);
+//                    });
+//                });
+//            })->exists();
+//        }
+//        else if($user->iduser_role == 6){
+//            $exist = Agent::where('idvillage',$request['village'])->whereHas('userBelongs',function ($q) {
+//                $q->where('idoffice',Auth::user()->idoffice)->whereIn('status',[1,2,3]);
+//            })->whereIn('status',[1,2,3])->first();
+//            if($exist != null){
+//                return response()->json(['error' => 'Agent has already assigned for this village!', 'statusCode' => -99]);
+//            }
+//
+//            $idExist = User::where('nic', $user->nic)->where('idUser', '!=', $user->idUser)->whereIn('status', [1, 2])->exists();
+//        }
+//        else{
+//            $idExist = User::where('nic', $user->nic)->where('idUser', '!=', $user->idUser)->whereIn('status', [1, 2])->exists();
+//        }
+//        if($idExist == 1){
+//            return response()->json(['errors' => ['error'=>'Another active user already exist with same NIC!']]);
+//        }
         if($user != null){
             if($user->iduser_role == 7){
 
@@ -670,31 +678,70 @@ class UserController extends Controller
                 }
             }
             else if($user->iduser_role == 6){
-                $exist = Agent::where('idvillage',$user->agent->idvillage)->whereHas('userBelongs',function ($q) use ($user){
-                    $q->where('idoffice',$user->idoffice)->whereIn('status',[1,2,3]);
-                })->whereIn('status',[1,2,3])->first();
-
-                if($exist != null){
-                    return response()->json(['errors' => ['error'=>'Another active agent already exist in the village!']]);
+                $agent = Agent::where('idUser',$user->idUser)->first();
+                if($agent != null) {
+                    if ($agent->status == 0) {
+                        $agent->status = 1;
+                        $agent->save();
+                    }
                 }
-
-                if ($user->status == 0) {
-                    $user->status = 1;
-                    $user->save();
+                else{
+                    return response()->json(['errors' => ['error'=>'User invalid!']]);
                 }
             }
-            else{
-                if ($user->status == 0) {
-                    $user->status = 1;
-                    $user->save();
-                }
+
+            if ($user->status == 0 && $user->iduser_role != 7) { // member only disabled  from auth user office.Can not change user statuss.only member agent table status change
+                $user->status = 1;
+                $user->save();
             }
+
         }
         else{
             return response()->json(['errors' => ['error'=>'User invalid!']]);
         }
 
         return response()->json(['success' => 'enabled']);
+    }
+
+    public function deleteUser(Request $request){
+        $user = User::find(intval($request['id']));
+        if($user != null){
+            if($user->iduser_role == 7){
+                $link = $user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first();
+                if($link != null) {
+
+                    $link->status = 3;
+                    $link->save();
+
+                }
+                else{
+                    return response()->json(['errors' => ['error'=>'User invalid!']]);
+                }
+
+            }
+            else if($user->iduser_role == 6){
+                $agent = Agent::where('idUser',$user->idUser)->first();
+                if($agent != null) {
+
+                        $agent->status = 3;
+                        $agent->save();
+
+                }
+                else{
+                    return response()->json(['errors' => ['error'=>'User invalid!']]);
+                }
+            }
+
+            if ($user->iduser_role != 7) { // member only disabled  from auth user office.Can not change user statuss.only member agent table status change
+                $user->status = 3;
+                $user->save();
+            }
+        }
+        else{
+            return response()->json(['errors' => ['error'=>'User invalid!']]);
+        }
+
+        return response()->json(['success' => 'deleted']);
     }
 
     public function autoMember(Request $request){
@@ -775,5 +822,62 @@ class UserController extends Controller
         return view('user.my_profile', ['title' =>  __('My Profile'),'user'=>$user, 'userTitles'=>$userTitles]);
     }
 
+
+    public function login(Request $request)
+    {
+        //validation start
+        $validator = \Validator::make($request->all(), [
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ], [
+            'username.required' => 'Username should be provided!',
+            'username.string' => 'Username must be a string!',
+            'password.required' => 'Password should be provided!',
+            'password.string' => 'Password should be a string!',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first(), 'statusCode' => -99]);
+        }
+
+        $userMaster = User::where('username', $request->username)->where('iduser_role','!=',7)->where('status','!=',3)->orWhere(function ($q) use ($request){
+            $q->where('username', $request->username)->where('iduser_role',7)->whereHas('member',function ($q){
+                $q->whereHas('memberAgents',function ($q){
+                    $q->whereRaw('idagent = member.current_agent')->where('status','!=',3);
+                });
+            });
+        })->first();
+        if($userMaster!= null ) {
+            if ($userMaster->iduser_role > 2) {
+                if ($userMaster->status != 1) {
+                    return redirect()->back()->with(['error' => 'Account is not activated!']);
+                }
+                if ($userMaster->office->status != 1) {
+                    return redirect()->back()->with(['error' => 'Your office has been disabled.Please contact your administrator!']);
+                }
+            }
+        }
+        else{
+            return redirect()->back()->with(['error' => 'Username or Password Incorrect!']);
+        }
+
+        if(!Hash::check($request['password'],$userMaster->password )){
+            return redirect()->back()->with(['error' => 'Please re-check username and password!']);
+
+        }
+        if (!Auth::loginUsingId($userMaster->idUser,$request['remember'])) {
+            return redirect()->back()->with(['error' => 'Please re-check username and password!']);
+        }
+
+        if(Auth::user()->loginAlert() == 1){
+            $contactNo = Auth::user()->contact_no1;
+            if($contactNo != null) {
+                app(SmsController::class)->send('You have just logged into the system.', $contactNo);
+            }
+        }
+
+        return redirect()->route('dashboard');
+
+    }
 
 }

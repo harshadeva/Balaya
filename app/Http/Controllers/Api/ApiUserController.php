@@ -53,7 +53,13 @@ class ApiUserController extends Controller
             return response()->json(['error' => $validator->errors()->first(), 'statusCode' => -99]);
         }
 
-        $userMaster = User::where('username', $request->username)->first();
+        $userMaster = User::where('username', $request->username)->where('iduser_role','!=',7)->where('status','!=',3)->orWhere(function ($q) use ($request){
+            $q->where('username', $request->username)->where('iduser_role',7)->whereHas('member',function ($q){
+               $q->whereHas('memberAgents',function ($q){
+                  $q->whereRaw('idagent = member.current_agent')->where('status','!=',3);
+               });
+            });
+        })->first();
         if ($userMaster != null) {
             if ($userMaster->iduser_role > 2 && $userMaster->iduser_role != 7) {
                 if ($userMaster->status != 1) {
@@ -68,7 +74,7 @@ class ApiUserController extends Controller
         }
 
         if ($userMaster->iduser_role == 6) {
-            //not specific action .only check user role
+            //not specific action yet.only check user role
 
         } elseif ($userMaster->iduser_role == 7) {
             if ($userMaster->member->memberAgents()->where('idAgent', $userMaster->member->current_agent)->first()->status != 1) {
@@ -81,9 +87,12 @@ class ApiUserController extends Controller
             return response()->json(['error' => 'User Invalid!', 'statusCode' => -99]);
         }
 
+        if(!Hash::check($request['password'],$userMaster->password )){
+            return response()->json(['error' => 'Please re-check username and password!', 'statusCode' => -99]);
+        }
 
-        if (!Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
-            return response()->json(['error' => 'Username or Password Incorrect!', 'statusCode' => -99]);
+        if (!Auth::loginUsingId($userMaster->idUser)) {
+            return response()->json(['error' => 'Please re-check username and password!', 'statusCode' => -99]);
         }
 
         $token = Auth::user()->createToken('authToken')->accessToken; //generate access token
@@ -91,144 +100,6 @@ class ApiUserController extends Controller
         return response()->json(['success' => ['userId' => Auth::user()->idUser,'userRole' => Auth::user()->iduser_role, 'accessToken' => $token], 'statusCode' => 0]);
 
     }
-
-//    /**
-//     *update user details
-//     */
-//    public function update(Request $request)
-//    {
-//        //validation start
-//        $validationMessages = [
-//            'nic.required' => 'NIC No should be provided!',
-//            'nic.max' => 'NIC No invalid!',
-//            'title.required' => 'User title should be provided!',
-//            'title.numeric' => 'User title invalid!',
-//            'firstName.required' => 'First name should be provided!',
-//            'firstName.regex' => 'First name can only contain characters!',
-//            'firstName.max' => 'First name must be less than 50 characters!',
-//            'lastName.required' => 'Last name should be provided!',
-//            'lastName.regex' => 'Last name can only contain characters!',
-//            'lastName.max' => 'Last name must be less than 50 characters!',
-//            'username.required' => 'Username should be provided!',
-//            'username.max' => 'Username must be less than 50 characters!',
-//            'email.email' => 'Email format invalid!',
-//            'email.max' => 'Email must be less than 255 characters!',
-//            'password.required' => 'Password should be provided!',
-//            'password.confirmed' => 'Passwords didn\'t match!',
-//            'phone.numeric' => 'Phone number can only contain numbers!',
-//            'userRole.required' => 'User role should be provided!',
-//            'userRole.numeric' => 'User role should be provided!',
-//            'dob.required' => 'Date of birth should be provided!',
-//            'dob.date' => 'Date of birth format invalid!',
-//            'dob.before' => 'Date of birth should be a valid birthday!',
-//            'gender.required' => 'Gender should be provided!',
-//            'gender.boolean' => 'Gender invalid!',
-//
-//        ];
-//
-//        $validator = \Validator::make($request->all(), [
-//            'userRole' => 'required|numeric',
-//            'title' => 'required|numeric',
-//            'firstName' => 'required',
-//            'lastName' => 'required',
-//            'gender' => 'required|boolean',
-//            'username' => 'required|max:50',
-//            'password' => 'nullable|confirmed',
-//
-//
-//        ], $validationMessages);
-//
-//
-//        if ($validator->fails()) {
-//            return response()->json(['error' => $validator->errors()->first(), 'statusCode' => -99]);
-//        }
-//        if ($request['userRole'] == 2 || $request['userRole'] == 3 || $request['userRole'] == 5 || $request['userRole'] == 6 || $request['userRole'] == 7) {
-//
-//            $validator = \Validator::make($request->all(), [
-//                'nic' => 'required|max:15',
-//                'email' => 'nullable|email|max:255',
-//                'phone' => 'nullable|numeric',
-//                'dob' => 'required|date|before:today',
-//
-//            ], $validationMessages);
-//
-//
-//            if ($validator->fails()) {
-//                return response()->json(['error' => $validator->errors()->first(), 'statusCode' => -99]);
-//            }
-//
-//            if (User::where('nic', $request['nic'])->where('idUser', '!=', $request['userId'])->first() != null) {
-//                return response()->json(['error' => 'NIC No already exist!', 'statusCode' => -99]);
-//            }
-//        }
-//
-//        if (Auth::user()->iduser_role == 2) {
-//            if ($request['office'] != null) {
-//                $office = $request['office'];
-//            } else {
-//                return response()->json(['error' => 'Office should be provided!', 'statusCode' => -99]);
-//            }
-//        } else {
-//            $office = Auth::user()->idoffice;
-//        }
-//
-//        if (User::where('username', $request['username'])->where('idUser', '!=', $request['userId'])->first() != null) {
-//            return response()->json(['error' => 'Username already exist!', 'statusCode' => -99]);
-//        }
-//
-//
-//        if ($request['password'] != null) {
-//            if (User::find(intval($request['userId']))->password != Hash::make($request['oldPassword'])) {
-//                return response()->json(['error' => 'Old password incorrect!', 'statusCode' => -99]);
-//            }
-//
-//        }
-//
-//        if ($request['userRole'] == 3) {
-//            $exist = User::where('idoffice', $office)->where('iduser_role', 3)->where('idUser', '!=', $request['userId'])->first();
-//            if ($exist != null) {
-//                return response()->json(['error' => 'Office admin has been already created!', 'statusCode' => -99]);
-//            }
-//        }
-//
-//        if (isset(UserTitle::find(intval($request['title']))->gender) && UserTitle::find(intval($request['title']))->gender != $request['gender']) {
-//
-//            return response()->json(['error' => 'Please re-check title and gender!', 'statusCode' => -99]);
-//
-//        }
-//
-//        //validation end
-//
-//
-//        //update in user table
-//        $user = User::find(intval($request['userId']));
-//        $user->idoffice = $office;
-//        $user->iduser_role = $request['userRole'];
-//        $user->iduser_title = $request['title'];
-//        $user->fName = $request['firstName'];
-//        $user->lName = $request['lastName'];
-//        $user->nic = $request['nic'];
-//        $user->gender = $request['gender'];
-//        $user->contact_no1 = $request['phone'];
-//        $user->contact_no2 = null;
-//        $user->address = $request['address'];
-//        if ($request['password'] != null) {
-//            $user->password = Hash::make($request['password']);
-//        }
-//        $user->email = $request['email'];
-//        $user->username = $request['username'];
-//        $user->bday = date('Y-m-d', strtotime($request['dob']));
-//        $user->save();
-//        //update in user table  end
-//
-//        //update in selected user role details
-//
-//        //update in selected user role details end
-//
-//        return response()->json(['success' => 'User Registered Successfully!', 'statusCode' => 0]);
-//
-//    }
-
 
     public function getById(Request $request)
     {

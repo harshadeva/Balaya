@@ -182,8 +182,8 @@ class ApiRegistrationController extends Controller
                 return response()->json(['error' => 'Village invalid!', 'statusCode' => -99]);
             }
             $exist = Agent::where('idvillage',$request['village'])->whereHas('userBelongs',function ($q) use ($office){
-                $q->where('idoffice',$office)->whereIn('status',[1,2,3]);
-            })->whereIn('status',[1,2,3])->first();
+                $q->where('idoffice',$office)->whereIn('status',[0,1,2]);
+            })->whereIn('status',[0,1,2])->first();
             if($exist != null){
                 return response()->json(['error' => 'Agent has already assigned for this village!', 'statusCode' => -99]);
             }
@@ -206,20 +206,17 @@ class ApiRegistrationController extends Controller
         }
 
         //check is nic already taken by active user
-        if($request['userRole'] == 7){
-            $idExist = User::where('nic',$request['nic'])->where(function ($q)  use ($office){
+            $memberExist = User::where('nic',$request['nic'])->where('iduser_role',7)->where(function ($q)  use ($office){
                 $q->whereHas('member',function ($q) use ($office){
                     $q->whereHas('memberAgents',function ($q) use ($office){
-                        $q->where('idoffice',$office)->whereIn('status', [1, 2]);
+                        $q->where('idoffice',$office)->where('status','!=',3);
                     });
                 });
             })->exists();
-        }
-        else {
-            $idExist = User::where('nic', $request['nic'])->whereIn('status', [1, 2])->exists();
-        }
-        if($idExist == 1){
-            return response()->json(['errors' => ['error'=>'Another active user already exist with same NIC!']]);
+
+            $userExist = User::where('nic', $request['nic'])->where('iduser_role','!=',7)->where('status','!=',3)->exists();
+        if($userExist == 1 || $memberExist == 1){
+            return response()->json(['error' => 'Another user already exist with same NIC!', 'statusCode' => -99]);
         }
         //check is nic already taken by active user  end
 

@@ -28,6 +28,7 @@ Route::get('/signin', function () {
 })->name('signin')->middleware('guest');
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::post('customLogin', 'UserController@login')->name('customLogin');
 Route::get('privacy', function (){
     return view('privacy.privacy');
 })->name('privacy');
@@ -122,6 +123,10 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
                 Route::post('updateCanvassingType', 'CanvassingController@updateCanvassingType')->name('updateCanvassingType')->middleware('onlyDataEntry');
                 Route::post('deleteCanvassingTempValues', 'CanvassingController@deleteTempValues')->name('deleteCanvassingTempValues')->middleware('onlyDataEntry');
 
+                Route::get('unapproved_canvassing', 'CanvassingController@unapproved')->name('upApprovedCanvassing');
+                Route::get('pending_canvassing', 'CanvassingController@pending')->name('pendingCanvassing');
+                Route::get('rejected_canvassing', 'CanvassingController@rejected')->name('rejectedCanvassing');
+                Route::post('finished_canvassing', 'CanvassingController@finishedTable')->name('finishedCanvassing');
             });
 
             Route::group(['middleware' => 'officeAdmin', 'prefix' => ''], function () {
@@ -137,13 +142,9 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
                 Route::get('view_users', 'UserController@view')->name('viewUser');
 
                 //Canvassing
-                Route::get('unapproved_canvassing', 'CanvassingController@unapproved')->name('upApprovedCanvassing');
                 Route::post('approveCanvassing', 'CanvassingController@approve')->name('approveCanvassing');
                 Route::post('rejectCanvassing', 'CanvassingController@reject')->name('rejectCanvassing');
-                Route::get('pending_canvassing', 'CanvassingController@pending')->name('pendingCanvassing');
-                Route::get('rejected_canvassing', 'CanvassingController@rejected')->name('rejectedCanvassing');
                 Route::get('finished_canvassing', 'CanvassingController@finished')->name('finishedCanvassing');
-                Route::post('finished_canvassing', 'CanvassingController@finishedTable')->name('finishedCanvassing');
 
             });
 
@@ -219,6 +220,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('approve_agent', 'UserController@approveAgent')->name('approveAgent');
             Route::post('disable_user', 'UserController@disable')->name('disableUser');
             Route::post('enable_user', 'UserController@enable')->name('enableUser');
+            Route::post('delete_user', 'UserController@deleteUser')->name('deleteUser');
             Route::post('auto_approve_member', 'UserController@autoMember')->name('autoApproveMember');
             Route::post('auto_approve_agent', 'UserController@autoAgent')->name('autoApproveAgent');
             Route::post('get_members_by_agent', 'UserController@getMemberByAgent')->name('getMembersByAgent');

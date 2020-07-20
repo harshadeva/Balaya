@@ -46,7 +46,7 @@
                         @endif
 
 
-                        <form class="form-horizontal m-t-30" action="{{ route('login') }}" method="POST">
+                        <form class="form-horizontal m-t-30" action="{{ route('customLogin') }}" method="POST">
                             {{--<form class="form-horizontal m-t-30" action="{{ route('authenticate') }}" method="POST">--}}
 
 

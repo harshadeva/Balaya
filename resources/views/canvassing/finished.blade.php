@@ -71,8 +71,8 @@
                                                     <th>LOCATION</th>
                                                     <th>VILLAGES</th>
                                                     <th>DATE</th>
-                                                    <TH>STARTED</TH>
-                                                    <TH>FINISHED</TH>
+                                                    <th>STARTED</th>
+                                                    <th>FINISHED</th>
                                                     <th>HOUSES</th>
                                                     <th>PARTICIPATION</th>
                                                     <th nowrap="true">VOTER CATEGORY</th>

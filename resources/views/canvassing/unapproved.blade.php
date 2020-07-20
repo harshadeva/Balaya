@@ -71,9 +71,11 @@
                                                     <th>LOCATION</th>
                                                     <th>VILLAGES</th>
                                                     <th>DATE</th>
-                                                    <TH>TIME</TH>
-                                                    <TH>CREATED AT</TH>
+                                                    <th>TIME</th>
+                                                    <th>CREATED AT</th>
+                                                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
                                                     <th>OPTION</th>
+                                                    @endif
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -92,6 +94,7 @@
                                                                 <td>{{$canvassing->date}}</td>
                                                                 <td>{{$canvassing->time}}</td>
                                                                 <td>{{$canvassing->created_at}}</td>
+                                                                @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
                                                                 <td>
                                                                     <div class="dropdown">
                                                                         <button class="btn btn-secondary btn-sm dropdown-toggle"
@@ -114,6 +117,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </td>
+                                                                @endif
                                                             </tr>
 
                                                         @endforeach

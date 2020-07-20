@@ -214,33 +214,38 @@
                                                                             </a>
                                                                             @if( \Illuminate\Support\Facades\Auth::user()->iduser_role <= 3)
                                                                                 @if($user->iduser_role == 7)
-                                                                                        @if($user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first()->status == 1)
-                                                                                            <a href="#"
-                                                                                               onclick="disableUser({{$user->idUser}})"
-                                                                                               class="dropdown-item">Disable
-                                                                                            </a>
-                                                                                        @elseif($user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first()->status == 0)
-                                                                                            <a href="#"
-                                                                                               onclick="enableUser({{$user->idUser}})"
-                                                                                               class="dropdown-item">Enable
-                                                                                            </a>
-                                                                                        @else
-                                                                                        @endif
+                                                                                    @if($user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first()->status == 1)
+                                                                                        <a href="#"
+                                                                                           onclick="disableUser({{$user->idUser}})"
+                                                                                           class="dropdown-item">Disable
+                                                                                        </a>
+                                                                                    @elseif($user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first()->status == 0)
+                                                                                        <a href="#"
+                                                                                           onclick="enableUser({{$user->idUser}})"
+                                                                                           class="dropdown-item">Enable
+                                                                                        </a>
+                                                                                    @else
+                                                                                    @endif
                                                                                 @else
-                                                                                        @if($user->status == 1)
-                                                                                            <a href="#"
-                                                                                               onclick="disableUser({{$user->idUser}})"
-                                                                                               class="dropdown-item">Disable
-                                                                                            </a>
-                                                                                        @elseif($user->status == 0)
-                                                                                            <a href="#"
-                                                                                               onclick="enableUser({{$user->idUser}})"
-                                                                                               class="dropdown-item">Enable
-                                                                                            </a>
-                                                                                        @else
-                                                                                        @endif
+                                                                                    @if($user->status == 1)
+                                                                                        <a href="#"
+                                                                                           onclick="disableUser({{$user->idUser}})"
+                                                                                           class="dropdown-item">Disable
+                                                                                        </a>
+                                                                                    @elseif($user->status == 0)
+                                                                                        <a href="#"
+                                                                                           onclick="enableUser({{$user->idUser}})"
+                                                                                           class="dropdown-item">Enable
+                                                                                        </a>
+                                                                                    @else
+                                                                                    @endif
                                                                                 @endif
-
+                                                                                @if($user->iduser_role != 3)
+                                                                                    <a href="#"
+                                                                                       onclick="deleteUser({{$user->idUser}})"
+                                                                                       class="dropdown-item">Delete
+                                                                                    </a>
+                                                                                @endif
                                                                             @endif
 
 
@@ -705,7 +710,7 @@
 
         function disableUser(id) {
             swal({
-                title: 'Do you want to disable this user?',
+                title: 'Disable this user?',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, Disable!',
@@ -772,7 +777,7 @@
 
         function enableUser(id) {
             swal({
-                title: 'Do you want to enable this user?',
+                title: 'Enable this user?',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, Enable!',
@@ -838,6 +843,75 @@
 //                }
             })
         }
+
+        function deleteUser(id) {
+            swal({
+                title: 'Delete this user?',
+                text:'You will not be able to undo this process',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete!',
+                cancelButtonText: 'No, cancel!',
+                confirmButtonClass: 'btn btn-danger',
+                cancelButtonClass: 'btn btn-success m-l-10',
+                buttonsStyling: false
+            }).then(function () {
+
+                $.ajax({
+                    url: '{{route('deleteUser')}}',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function (data) {
+                        if (data.errors != null) {
+
+                            notify({
+                                type: "error", //alert | success | error | warning | info
+                                title: 'DELETION PROCESS INVALID!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'USER DELETED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'User deleetd successfully.'
+                            });
+                            location.reload();
+                        }
+
+                    }
+                });
+
+            }, function (dismiss) {
+                // dismiss can be 'cancel', 'overlay',
+                // 'close', and 'timer'
+//                if (dismiss === 'cancel') {
+//                    swal(
+//                        'Cancelled',
+//                        'Process has been cancelled',
+//                        'error'
+//                    )
+//                }
+            })
+        }
+
 
     </script>
 @endsection
