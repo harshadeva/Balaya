@@ -161,7 +161,7 @@ class CouncilController extends Controller
             $query = $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        $councils = $query->latest()->where('status',1)->paginate(10);
+        $councils = $query->where('iddistrict',Auth::user()->office->iddistrict)->latest()->where('status',1)->paginate(10);
 
         return view('council.view')->with(['title'=>'Council View','councils'=>$councils]);
     }

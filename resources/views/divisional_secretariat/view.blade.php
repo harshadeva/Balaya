@@ -509,7 +509,7 @@
                             message: 'Gramasewa division assigned successfully!'
                         });
                     }
-                    $('#' + id).find("td").eq(3).html(data.count + ' DIVISIONS');
+                    $('#' + id).find("td").eq(4).html(data.count + ' DIVISIONS');
                     $('#assignModal').modal('hide');
 
                 }

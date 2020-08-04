@@ -10,7 +10,7 @@ class VotersCount extends Model
     protected $primaryKey = 'idvoters_count';
 
     public function village(){
-        return $this->hasOne(Village::class,'idvillage');
+        return $this->belongsTo(Village::class,'idvillage');
     }
 
 }

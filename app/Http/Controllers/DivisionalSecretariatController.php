@@ -142,7 +142,7 @@ class DivisionalSecretariatController extends Controller
             $query = $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        $secretariats = $query->latest()->where('status',1)->paginate(10);
+        $secretariats = $query->where('iddistrict',Auth::user()->office->iddistrict)->latest()->where('status',1)->paginate(10);
 
         return view('divisional_secretariat.view')->with(['title'=>'Divisional Secretariat View','secretariats'=>$secretariats]);
     }
