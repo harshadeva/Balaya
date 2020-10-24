@@ -108,8 +108,6 @@ class DivisionalSecretariatController extends Controller
         $division->idUser = Auth::user()->idUser;
         $division->save();
         // save in divisional secretariat table end
-
-
         return response()->json(['success' => 'Divisional Secretariat updated']);
     }
 

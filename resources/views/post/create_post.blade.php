@@ -631,10 +631,8 @@
                         }
                         else if (type == 3) {
                             $('#previewCard').append("<div class='col-md-3 py-2 text-center'><div class='bg-info  audioVideoPreview'><em style='width: 100%' class='center fa  fa-file-audio-o fa-3x text-white'></em></div></div>");
-
                         }
                     }
-
                     reader.readAsDataURL(input.files[i]);
                 }
             }

@@ -9,6 +9,7 @@ class PostAttachment extends Model
     protected $table = 'post_attachment';
     protected $primaryKey = 'idpost_attachment';
     protected $appends = ['full_path','api_path'];
+
     public function post()
     {
         return $this->belongsTo(Post::class, 'idPost');
